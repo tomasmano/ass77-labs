@@ -37,12 +37,16 @@ public class MyLinkedList<E extends Comparable<E>> implements ReversibleList<E> 
         return contains(e, it);
     }
     
+    /**
+     * Helper methods for recursive contains
+     */
     private  boolean contains(E e, Iterator<E> it) {
         if (it.hasNext()) {
             E compared = it.next();
             if(compared.equals(e)){
                 return true;
             } else {
+                // recursion ....
                 return contains(e, it);
             }
         }
@@ -60,7 +64,7 @@ public class MyLinkedList<E extends Comparable<E>> implements ReversibleList<E> 
         // EMPTY list flow
         if (isEmpty() == true) {
             first = new RealNode<E>(e, NULL_NODE_MIN, last);
-            LOG.info("Added First Node with elem [{}]: {}", e, first);
+            LOG.debug("Added First Node with elem [{}]: {}", e, first);
             return;
         }
         // NON-EMPTY list flow
@@ -70,10 +74,7 @@ public class MyLinkedList<E extends Comparable<E>> implements ReversibleList<E> 
     }
 
     public boolean remove(E e) {
-        return remove(e, iterator());
-    }
-
-    private boolean remove(E e, Iterator<E> it) {
+        Iterator<E> it = iterator();
         while (it.hasNext()) {
             E current = it.next();
             
@@ -130,6 +131,9 @@ public class MyLinkedList<E extends Comparable<E>> implements ReversibleList<E> 
         }
     }
 
+    /**
+     * Swap the given nodes.
+     */
     private void swap(Node<E> node1, Node<E> node2){
         Node<E> early = node1.getPrevious();
         Node<E> later = node2.getNext();
@@ -141,6 +145,12 @@ public class MyLinkedList<E extends Comparable<E>> implements ReversibleList<E> 
         later.setPrevious(node1);
     }
     
+    /**
+     * Returns node with the given index.
+     * 
+     * @param index
+     * @return 
+     */
     public Node<E> node(int index){
         assert index <= this.size;
         MyLinkedListIterator<E> it = new MyLinkedListIterator<E>(this, first);
@@ -157,7 +167,7 @@ public class MyLinkedList<E extends Comparable<E>> implements ReversibleList<E> 
     }
 
     /**
-     * Helper methods for testing. Converts the given list to java list
+     * Helper methods for testing. Converts the given list to java.util.List
      */
     public static <E extends Comparable<E>> List<E> toList(MyLinkedList<E> list) {
         List arrayliList = new ArrayList();
@@ -168,7 +178,7 @@ public class MyLinkedList<E extends Comparable<E>> implements ReversibleList<E> 
         return arrayliList;
     }
     
-    //////////  Helper methods //////////
+    //////////  Helper private methods //////////
     
     private Node<E> getCurrent(){
         return last.getPrevious();

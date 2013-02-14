@@ -1,13 +1,14 @@
 package ass.manotomas.lab01.task01.helper;
 
 /**
+ * Node contract.
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
 public interface Node<E extends Comparable<E>> extends Comparable<E> {
 
     public boolean hasNext();
-    
+
     public boolean hasPrevious();
 
     public E getElement();

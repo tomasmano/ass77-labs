@@ -40,6 +40,12 @@ public class MyLinkedListIterator<E extends Comparable<E>> implements Iterator<E
         oldCurrent.getPrevious().setNext(current);
     }
     
+    /**
+     * Returns the current node instead of its element (as it is defined in
+     * interface conctract).
+     *
+     * @return the current node instead of its element
+     */
     protected Node<E> nextNode() {
         if (current.hasNext()) {
             Node<E> oldCurrent = current;

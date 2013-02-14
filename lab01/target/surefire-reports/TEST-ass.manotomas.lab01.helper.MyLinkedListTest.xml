@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.306" errors="0" skipped="0" tests="13" name="ass.manotomas.lab01.helper.MyLinkedListTest">
+<testsuite failures="0" time="0.292" errors="0" skipped="0" tests="13" name="ass.manotomas.lab01.helper.MyLinkedListTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/jdk1.7.0_05/jre/lib/amd64"/>
@@ -59,17 +59,17 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="0.126" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_add_all"/>
+  <testcase time="0.119" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_add_all"/>
   <testcase time="0.001" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_getting_node_by_index"/>
-  <testcase time="0.002" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_contains_elem_in_linked_list"/>
-  <testcase time="0.002" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_isEmpty_linked_list"/>
-  <testcase time="0.002" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_remove_elem_from_linked_list"/>
+  <testcase time="0.001" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_iterating_linked_list"/>
+  <testcase time="0.001" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_contains_elem_in_linked_list"/>
+  <testcase time="0.001" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_isEmpty_linked_list"/>
+  <testcase time="0.001" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_remove_elem_from_linked_list"/>
   <testcase time="0.001" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_remove_elem_from_small_linked_list"/>
   <testcase time="0.001" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_remove_all_elem_from_linked_list"/>
-  <testcase time="0.002" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_descending_iterating_linked_list"/>
-  <testcase time="0.008" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_descending_iterating_small_linked_list"/>
-  <testcase time="0" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_sorting"/>
-  <testcase time="0.062" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_huge_sorting"/>
-  <testcase time="0.014" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_add_elems_to_linked_list"/>
-  <testcase time="0.002" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_iterating_linked_list"/>
+  <testcase time="0.005" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_descending_iterating_linked_list"/>
+  <testcase time="0.003" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_descending_iterating_small_linked_list"/>
+  <testcase time="0.002" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_sorting"/>
+  <testcase time="0.073" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_huge_sorting"/>
+  <testcase time="0.002" classname="ass.manotomas.lab01.helper.MyLinkedListTest" name="test_add_elems_to_linked_list"/>
 </testsuite>

@@ -16,7 +16,7 @@ public class NullNode<E extends Comparable<E>> implements Node<E>{
     private Node<E> previous;
 
     public NullNode() {
-        LOG.info("Initializing null node...");
+        LOG.debug("Initializing null node...");
     }
 
     public boolean hasNext() {
