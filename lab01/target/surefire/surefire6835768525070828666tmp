@@ -1,0 +1,10 @@
+#surefire
+#Thu Feb 14 03:47:21 CET 2013
+jpda.listen=true
+maven.surefire.debug=-Xdebug -Xrunjdwp\:transport\=dt_socket,server\=n,address\=39808
+user.dir=/home/tomy/skul/ass77-labs/lab01
+jpda.address=39808
+localRepository=/home/tomy/.m2/repository
+forkMode=once
+basedir=/home/tomy/skul/ass77-labs/lab01
+test=ass.manotomas.lab01.helper.MyLinkedListTest\#test_huge_sorting
