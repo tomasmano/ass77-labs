@@ -1,5 +1,6 @@
-package ass.manotomas.lab01.task01;
+package ass.manotomas;
 
+import ass.manotomas.lab01.task01.ReversibleList;
 import ass.manotomas.lab01.task01.helper.MyLinkedList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -8,7 +9,7 @@ import java.util.Iterator;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class ReversibleListImpl<E extends Comparable<E>> implements ReversibleList<E> {
+public class ReversibleLinkedList<E extends Comparable<E>> implements ReversibleList<E> {
     
     private MyLinkedList<E> inner = new MyLinkedList<E>();
 
