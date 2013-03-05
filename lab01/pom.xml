@@ -20,7 +20,7 @@
         
         <!--////////// Logging //////////-->
         
-        <dependency>
+<!--        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${org.slf4j.version}</version>
@@ -47,12 +47,12 @@
             <artifactId>jul-to-slf4j</artifactId>
             <version>${org.slf4j.version}</version>
             <scope>runtime</scope>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
+            <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

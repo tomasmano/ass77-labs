@@ -1,6 +1,6 @@
 
-import ass.student.manotoma.INode;
-import ass.student.manotoma.INodeFactory;
+import ass.manotoma.INode;
+import ass.manotoma.INodeFactory;
 import java.io.File;
 import org.junit.After;
 import org.junit.AfterClass;
