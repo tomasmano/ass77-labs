@@ -58,19 +58,15 @@ public class MyLinkedList<E extends Comparable<E>> implements ReversibleList<E> 
     }
 
     public void add(E e) {
-//        LOG.debug("-------------------------------");
-//        LOG.debug("Inserting element [{}]", e);
         size++;
         // EMPTY list flow
         if (isEmpty() == true) {
             first = new RealNode<E>(e, NULL_NODE_MIN, last);
-//            LOG.debug("Added First Node with elem [{}]: {}", e, first);
             return;
         }
         // NON-EMPTY list flow
         // #1 reserve the new node and put into inserted element
         Node<E> saved = new RealNode<E>(e, getCurrent(), last);
-//        LOG.debug("Added Node with elem [{}]: {}", e, saved);
     }
 
     public boolean remove(E e) {
@@ -100,25 +96,32 @@ public class MyLinkedList<E extends Comparable<E>> implements ReversibleList<E> 
     }
 
     public void sort() {
-//        System.out.println("Sorting inner elems: " +  MyLinkedList.toList(this));
-//        sortSwaping();
-//        System.out.println("Elems after sort: " +  MyLinkedList.toList(this));
+        System.out.println("Sorting inner elems on ["+this+"]: " + MyLinkedList.toList(this));
+        sortInner();
+        System.out.println("Elems after sort on ["+this+"]: " + MyLinkedList.toList(this));
+    }
+ 
+    /**
+     * Default sorting strategy.
+     */
+    private void sortInner() {
         List<E> array = MyLinkedList.toList(this);
-        System.out.println("Sorting inner elems on ["+this+"]: " + array);
         for (int i = 0; i < array.size() - 1; i++) {
             for (int j = 0; j < array.size() - i - 1; j++) {
                 if ((array.get(j).compareTo(array.get(j + 1)) == 1)) {
                     E tmp = array.get(j);
-                    array.set(j, array.get(j+1));
-                    array.set(j+1, tmp);
+                    array.set(j, array.get(j + 1));
+                    array.set(j + 1, tmp);
                 }
             }
         }
         this.clear();
         this.addAll(array);
-        System.out.println("Elems after sort on ["+this+"]: " + MyLinkedList.toList(this));
     }
     
+    /**
+     * Alternative sorting strategy using swaping.
+     */
     private void sortSwaping() {
         MyLinkedListIterator<E> it = new MyLinkedListIterator<E>(this, first);
         for (int i = 0; i < size - 1; i++) {

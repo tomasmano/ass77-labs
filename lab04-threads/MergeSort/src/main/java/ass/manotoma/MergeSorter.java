@@ -24,12 +24,13 @@ public class MergeSorter implements Sorter {
         Runnable r1 = new ParallelSorter(new MergeSorter(), left);
         Thread t1 = new Thread(r1);
         t1.start();
-        t1.join();
         
         // sort(right);
         Runnable r2 = new ParallelSorter(new MergeSorter(), right);
         Thread t2 = new Thread(r2);
         t2.start();
+        
+        t1.join();
         t2.join();
 
         double[] output = new double[data.length];

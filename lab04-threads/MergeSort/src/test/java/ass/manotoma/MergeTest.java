@@ -13,8 +13,8 @@ import static org.junit.Assert.*;
 public class MergeTest {
 
     private double[] numbs;
-    private final static int SIZE = 100;
-    private final static int MAX = 500;
+    private final static int SIZE = 10000;
+    private final static int MAX = 50000;
     private static final double DELTA = 1e-15;
 
     @Before

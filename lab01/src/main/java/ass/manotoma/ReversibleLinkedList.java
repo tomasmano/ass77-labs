@@ -5,7 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- *
+ * ReversibleList implementation using custom inner generic MyLinkedList.
+ * 
  * @author Tomas Mano <tomasmano@gmail.com>
  */
 public class ReversibleLinkedList<E extends Comparable<E>> implements ReversibleList<E> {

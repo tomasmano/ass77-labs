@@ -183,7 +183,7 @@ public class MyLinkedListTest {
     @Test
     public void test_huge_sorting() {
         MyLinkedList<Integer> myList = Factories.getEmptyMyLinkedList();
-        List<Integer> javaList = Factories.getListWithRandomNubers(100);
+        List<Integer> javaList = Factories.getListWithRandomNubers(1000);
         myList.addAll(javaList);
         Collections.sort(javaList);
         assertEquals(javaList.size(), myList.size());
