@@ -28,7 +28,7 @@ public class WorkerPoolImpl<T> implements WorkerPool<T> {
         return futures;
     }
 
-    private class BlockingResponse<T> implements Future<T> {
+    private class BlockingResponse<T> implements Future<T>, CallableAware<T> {
 
         private Callable<T> callable;
         private T val;
@@ -55,6 +55,10 @@ public class WorkerPoolImpl<T> implements WorkerPool<T> {
             } finally {
                 latch.countDown();
             }
+        }
+
+        public Callable<T> getCallable() {
+            return callable;
         }
 
         @Override

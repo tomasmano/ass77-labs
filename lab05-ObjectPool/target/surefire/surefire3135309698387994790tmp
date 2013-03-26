@@ -1,0 +1,6 @@
+#surefire
+#Tue Mar 26 14:14:41 CET 2013
+user.dir=/home/tomy/skul/ass77-labs/lab05-ObjectPool
+localRepository=/home/tomy/.m2/repository
+basedir=/home/tomy/skul/ass77-labs/lab05-ObjectPool
+test=ass.manotoma.ObjectPoolTest\#test_poll_and_offer_and_poll

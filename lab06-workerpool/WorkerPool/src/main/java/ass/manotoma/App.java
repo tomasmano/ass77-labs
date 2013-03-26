@@ -18,24 +18,28 @@ public class App {
 
         // init collections
         Collection<Callable<Integer>> sums = new ArrayList<Callable<Integer>>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100000; i++) {
             sums.add(new SumCallable(anyInt(), anyInt()));
         }
         // to test exception handling: arg less than zero is invalid
-                sums.add(new SumCallable(-1000, anyInt()));
+        //        sums.add(new SumCallable(-1000, anyInt()));
         
         // create pool
         WorkerPool<Integer> pool = new WorkerPoolImpl<Integer>(10);
         
+        long start = System.currentTimeMillis();
         // invoke pool
         List<Future<Integer>> futures = pool.call(sums);
-        System.out.format("Futures count [%s].%n", futures.size());
+//        System.out.format("Futures count [%s].%n", futures.size());
         
         // retrieve values
         for (Future<Integer> f : futures) {
             Integer res = f.get();
-            System.out.format("Get from future [%s] returned [%s]%n", f, res);
+//            System.out.format("Get from future [%s] returned [%s]%n", f, res);
         }
+        long end = System.currentTimeMillis();
+        long diff = end - start;
+        System.out.println(diff);
 
     }
 

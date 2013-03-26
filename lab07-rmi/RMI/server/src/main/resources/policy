@@ -1,0 +1,3 @@
+grant codeBase "file:/home/tomy/skul/ass77-labs/lab07-rmi/RMI/server/target/server-1.0-SNAPSHOT.jar"{
+    permission java.security.AllPermission;
+};

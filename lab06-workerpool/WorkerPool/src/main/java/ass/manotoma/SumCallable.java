@@ -28,4 +28,13 @@ public class SumCallable implements Callable<Integer> {
     public String toString() {
         return "SumCallable{" + "x=" + x + ", y=" + y + '}';
     }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+    
 }

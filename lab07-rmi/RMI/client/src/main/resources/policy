@@ -1,0 +1,3 @@
+grant codeBase "file:/path/to/your/client/jar/client.jar"{
+    permission java.security.AllPermission;
+};
