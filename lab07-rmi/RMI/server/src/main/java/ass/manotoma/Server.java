@@ -22,7 +22,7 @@ public class Server {
             PrimeNumberCalculator stub = (PrimeNumberCalculator) UnicastRemoteObject.exportObject(engine, 1099);
             Registry registry = LocateRegistry.getRegistry();
             registry.rebind(name, stub);
-            System.out.println("Compout engine bound");
+            System.out.println("Compute engine bound");
         } catch (Exception e) {
             System.err.println("An exception occured.");
             System.err.println(e);

@@ -43,5 +43,5 @@ public class PrimeNumberCalculatorImpl implements PrimeNumberCalculator {
         }
         return result;
     }
-    
+
 }

@@ -103,15 +103,6 @@ public class WorkerPoolTest {
         // invoke pool
         List<Future<Integer>> futures = pool.call(sums);
         
-        //when
-        // retrieve values
-        for (Future<Integer> f : futures) {
-            CallableAware<Integer> aware = (CallableAware<Integer>) f;
-            SumCallable sum = (SumCallable) aware.getCallable();
-            Integer res = f.get();
-        }
-        
-        //then
     }
 
     //////////  Helper methods  //////////

@@ -27,6 +27,8 @@ public class WorkerPoolImpl<T> implements WorkerPool<T> {
         }
         return futures;
     }
+    
+    //////////  Private Classes  //////////
 
     private class BlockingResponse<T> implements Future<T>, CallableAware<T> {
 
