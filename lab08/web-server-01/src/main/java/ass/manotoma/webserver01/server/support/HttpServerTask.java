@@ -1,7 +1,7 @@
 package ass.manotoma.webserver01.server.support;
 
 import ass.manotoma.webserver01.http.Request;
-import ass.manotoma.webserver01.io.HttpRequestParser;
+import ass.manotoma.webserver01.io.HttpRequestReader;
 
 /**
  * 
@@ -11,7 +11,7 @@ public class HttpServerTask implements ServerTask {
     
     private ServerJobTemplate template;
     
-    private HttpRequestParser parser;
+    private HttpRequestReader parser;
 
     public HttpServerTask() {
     }
@@ -20,7 +20,7 @@ public class HttpServerTask implements ServerTask {
         this.template = template;
     }
 
-    public HttpServerTask(ServerJobTemplate template, HttpRequestParser parser) {
+    public HttpServerTask(ServerJobTemplate template, HttpRequestReader parser) {
         this.template = template;
         this.parser = parser;
     }

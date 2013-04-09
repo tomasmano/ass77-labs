@@ -4,7 +4,7 @@ import ass.manotoma.webserver01.http.Request;
 import ass.manotoma.webserver01.http.Response;
 import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.http.HttpMsgsFactory;
-import ass.manotoma.webserver01.io.RequestParser;
+import ass.manotoma.webserver01.io.RequestReader;
 
 /**
  * Represents server job template. Example of Template Pattern.
@@ -13,7 +13,7 @@ import ass.manotoma.webserver01.io.RequestParser;
  */
 public class HttpServerJobTemplate implements ServerJobTemplate {
 
-    public Request parse(RequestParser parser) {
+    public Request parse(RequestReader parser) {
         return HttpMsgsFactory.createRequest(parser);
     }
 

@@ -9,15 +9,15 @@ import java.io.InputStreamReader;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class HttpRequestParser implements RequestParser {
+public class HttpRequestReader implements RequestReader {
 
     private BufferedReader br;
     private InputStream is;
 
-    public HttpRequestParser() {
+    public HttpRequestReader() {
     }
 
-    public HttpRequestParser(InputStream is) {
+    public HttpRequestReader(InputStream is) {
         this.is = is;
         br = new BufferedReader(new InputStreamReader(is));
     }

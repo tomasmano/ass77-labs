@@ -1,6 +1,6 @@
 package ass.manotoma.webserver01.server.core;
 
-import ass.manotoma.webserver01.io.HttpRequestParser;
+import ass.manotoma.webserver01.io.HttpRequestReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -45,7 +45,7 @@ public class EchoServer implements Server {
                 os.write(String.format("Hi client [%s]. How are you?%n", client.getInetAddress().getHostAddress()).getBytes());
                 InputStream is = client.getInputStream();
                 
-                HttpRequestParser reader = new HttpRequestParser(is);
+                HttpRequestReader reader = new HttpRequestReader(is);
                 String clientMsg = reader.read();
                 os.write(String.format("Echoing your response: [%s]. Bye.%n", clientMsg).getBytes());
                 

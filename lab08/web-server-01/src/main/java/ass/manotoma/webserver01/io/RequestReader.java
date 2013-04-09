@@ -6,7 +6,7 @@ import java.io.IOException;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public interface RequestParser {
+public interface RequestReader {
 
     /**
      * Reads request headers according to HTTP Specifications. The request line
