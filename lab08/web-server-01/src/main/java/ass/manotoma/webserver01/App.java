@@ -46,8 +46,8 @@ public class App {
                 os.write(String.format("Hi client [%s]. How are you?%n", client.getInetAddress().getHostAddress()).getBytes());
                 InputStream is = client.getInputStream();
                 
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                String clientMsg = br.readLine();
+                HttpRequestParser reader = new HttpRequestParser(is);
+                String clientMsg = reader.read();
                 os.write(String.format("Echoing your response: [%s]. Bye.%n", clientMsg).getBytes());
                 
                 os.close();

@@ -8,7 +8,7 @@ public class HttpServerTask implements ServerTask {
     
     private ServerJobTemplate template;
     
-    private byte[] bytes;
+    private HttpRequestParser parser;
 
     public HttpServerTask() {
     }
@@ -17,13 +17,13 @@ public class HttpServerTask implements ServerTask {
         this.template = template;
     }
 
-    public HttpServerTask(ServerJobTemplate template, byte[] bytes) {
+    public HttpServerTask(ServerJobTemplate template, HttpRequestParser parser) {
         this.template = template;
-        this.bytes = bytes;
+        this.parser = parser;
     }
 
     public void processConnection() {
-        Request req = template.parse(bytes);
+        Request req = template.parse(parser);
         template.preProcess(req);
         template.serve(req);
     }

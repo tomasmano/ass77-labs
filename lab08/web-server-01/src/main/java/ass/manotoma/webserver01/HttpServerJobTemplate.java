@@ -7,9 +7,8 @@ package ass.manotoma.webserver01;
  */
 public class HttpServerJobTemplate implements ServerJobTemplate {
 
-    public Request parse(byte[] bytes) {
-        String req = new String(bytes);
-        return HttpMsgsFactory.createRequest(req);
+    public Request parse(RequestParser parser) {
+        return HttpMsgsFactory.createRequest(parser);
     }
 
     public void preProcess(Request req) {

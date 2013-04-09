@@ -6,11 +6,9 @@ package ass.manotoma.webserver01;
  */
 public class HttpMsgsFactory {
     
-    public static HttpRequest createRequest(String input){
-        return null;
+    public static HttpRequest createRequest(RequestParser input){
     }
 
     public static HttpResponse createResponse(HttpRequest input){
-        return null;
     }
 }
