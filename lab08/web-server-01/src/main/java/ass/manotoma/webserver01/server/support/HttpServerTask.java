@@ -1,4 +1,7 @@
-package ass.manotoma.webserver01;
+package ass.manotoma.webserver01.server.support;
+
+import ass.manotoma.webserver01.http.Request;
+import ass.manotoma.webserver01.io.HttpRequestParser;
 
 /**
  * 

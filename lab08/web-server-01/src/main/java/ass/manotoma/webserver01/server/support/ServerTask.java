@@ -1,4 +1,4 @@
-package ass.manotoma.webserver01;
+package ass.manotoma.webserver01.server.support;
 
 /**
  * Command pattern example.

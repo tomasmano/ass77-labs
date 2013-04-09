@@ -1,4 +1,4 @@
-package ass.manotoma.webserver01;
+package ass.manotoma.webserver01.io;
 
 import java.io.IOException;
 
@@ -6,7 +6,7 @@ import java.io.IOException;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-interface RequestParser {
+public interface RequestParser {
 
     /**
      * Reads request headers according to HTTP Specifications. The request line

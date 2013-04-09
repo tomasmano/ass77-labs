@@ -1,4 +1,10 @@
-package ass.manotoma.webserver01;
+package ass.manotoma.webserver01.server.support;
+
+import ass.manotoma.webserver01.http.Request;
+import ass.manotoma.webserver01.http.Response;
+import ass.manotoma.webserver01.http.HttpRequest;
+import ass.manotoma.webserver01.http.HttpMsgsFactory;
+import ass.manotoma.webserver01.io.RequestParser;
 
 /**
  * Represents server job template. Example of Template Pattern.

@@ -1,5 +1,6 @@
 package ass.manotoma.webserver01;
 
+import ass.manotoma.webserver01.io.HttpRequestParser;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import static org.junit.Assert.*;

@@ -1,4 +1,4 @@
-package ass.manotoma.webserver01;
+package ass.manotoma.webserver01.io;
 
 import java.io.BufferedReader;
 import java.io.IOException;
