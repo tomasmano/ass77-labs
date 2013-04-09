@@ -21,6 +21,7 @@ public class HttpMsgsFactory {
         HttpRequest request = null;
         try {
             String firstLine = reader.read();
+            LOG.debug("Parsing request..");
             if (isEmpty(firstLine)) {
                 throw new BadSyntaxException("No input");
             }

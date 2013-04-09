@@ -5,7 +5,10 @@ package ass.manotoma.webserver01.server.support;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public interface ServerTask {
+public interface ServerTask extends Runnable {
 
-    void processConnection();
+    /**
+     * Executes the given job.
+     */
+    void process();
 }

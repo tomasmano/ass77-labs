@@ -1,7 +1,7 @@
 package ass.manotoma.webserver01;
 
 import ass.manotoma.webserver01.server.core.Server;
-import ass.manotoma.webserver01.server.core.EchoServer;
+import ass.manotoma.webserver01.server.core.WebServer;
 
 /**
  * Hello world!
@@ -10,7 +10,7 @@ import ass.manotoma.webserver01.server.core.EchoServer;
 public class App {
 
     public static void main(String[] args) {
-        Server server = new EchoServer();
+        Server server = new WebServer();
         server.serve();
     }
 }
