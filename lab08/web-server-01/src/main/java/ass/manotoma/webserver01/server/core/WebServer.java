@@ -1,12 +1,9 @@
 package ass.manotoma.webserver01.server.core;
 
 import ass.manotoma.webserver01.io.HttpRequestReader;
-import ass.manotoma.webserver01.server.support.HttpServerJobTemplate;
 import ass.manotoma.webserver01.server.support.HttpServerTask;
 import ass.manotoma.webserver01.server.support.ServerTask;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -44,7 +41,7 @@ public class WebServer implements Server {
                 client = server.accept();
                 LOG.info("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
                 
-                ServerTask task = new HttpServerTask(new HttpRequestReader(client.getInputStream()));
+                ServerTask task = new HttpServerTask(client, new HttpRequestReader(client.getInputStream()));
                 task.run();
                 
             } catch (IOException e) {

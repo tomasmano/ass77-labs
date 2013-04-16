@@ -1,5 +1,6 @@
 package ass.manotoma.webserver01.http;
 
+import ass.manotoma.webserver01.http.util.StatusCode;
 import ass.manotoma.webserver01.io.RequestReader;
 import java.io.IOException;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,18 @@ public class HttpMsgsFactory {
         return request;
     }
 
-    public static HttpResponse createResponse(HttpRequest input){
-        return null;
+    public static HttpResponse createResponse(HttpRequest input) throws Exception{
+        LOG.debug("Creating response.. processing request [{}] ..", input);
+        if (input == null) {
+            LOG.debug("Request is null, creating 400 response..");
+            return new HttpResponseError(StatusCode._400);
+        }
+        if (!input.getRequestTarget().exists()) {
+            LOG.debug("Requestested targed doesn't exist, creating 404 response...");
+            return new HttpResponseError(StatusCode._404);
+        }
+        HttpResponse response = new HttpResponseSuccess(input.getRequestTarget());
+        response.buildResponse();
+        return response;
     }
 }

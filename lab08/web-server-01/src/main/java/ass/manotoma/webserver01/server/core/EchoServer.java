@@ -11,14 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
 public class EchoServer implements Server {
-    
+
     private static final int PORT = 4444;
     public static final Logger LOG = LoggerFactory.getLogger(EchoServer.class);
-    
+
     public void serve() {
         LOG.info("Launching web server..");
         // listener socket
@@ -32,23 +32,23 @@ public class EchoServer implements Server {
             LOG.info("Shuting down..");
             System.exit(1);
         }
-        // client connection socket
-        Socket client = null;
+            // client connection socket
+            Socket client = null;
 
         while (true) {
             try {
                 LOG.info("Waiting for the clients' requests on the address: [{}/{}]...", InetAddress.getLocalHost().getHostAddress(), server.getLocalPort());
                 client = server.accept();
                 LOG.info("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
-                
+
                 OutputStream os = client.getOutputStream();
                 os.write(String.format("Hi client [%s]. How are you?%n", client.getInetAddress().getHostAddress()).getBytes());
                 InputStream is = client.getInputStream();
-                
+
                 HttpRequestReader reader = new HttpRequestReader(is);
                 String clientMsg = reader.read();
                 os.write(String.format("Echoing your response: [%s]. Bye.%n", clientMsg).getBytes());
-                
+
                 os.close();
                 is.close();
                 
@@ -57,5 +57,5 @@ public class EchoServer implements Server {
             }
         }
     }
-    
-}
+
+    }

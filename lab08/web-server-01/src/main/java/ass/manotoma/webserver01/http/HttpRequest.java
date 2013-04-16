@@ -1,5 +1,7 @@
 package ass.manotoma.webserver01.http;
 
+import java.io.File;
+
 /**
  *
  * @author Tomas Mano <tomasmano@gmail.com>
@@ -7,19 +9,19 @@ package ass.manotoma.webserver01.http;
 public class HttpRequest implements Request {
 
     private Method method;
-    private String requestTarget;
+    private File requestTarget;
 
     public HttpRequest() {
     }
 
     public HttpRequest(Method method, String requestTarget) {
         this.method = method;
-        this.requestTarget = requestTarget;
+        this.requestTarget = new File(requestTarget);
     }
 
     public HttpRequest(String method, String requestTarget) {
         this.method = Method.valueOf(method);
-        this.requestTarget = requestTarget;
+        this.requestTarget = new File("."+requestTarget);
     }
 
     public Method getMethod() {
@@ -30,11 +32,11 @@ public class HttpRequest implements Request {
         this.method = method;
     }
 
-    public String getRequestTarget() {
+    public File getRequestTarget() {
         return requestTarget;
     }
 
-    public void setRequestTarget(String requestTarget) {
+    public void setRequestTarget(File requestTarget) {
         this.requestTarget = requestTarget;
     }
 
@@ -44,8 +46,7 @@ public class HttpRequest implements Request {
     }
     
     //////////  Inner Class  //////////
-    
-    public enum Method{
+    public enum Method {
         GET
     }
 }
