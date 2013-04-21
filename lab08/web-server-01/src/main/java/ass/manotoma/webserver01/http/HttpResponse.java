@@ -3,6 +3,7 @@ package ass.manotoma.webserver01.http;
 import ass.manotoma.webserver01.server.support.Response;
 import ass.manotoma.webserver01.http.util.HeaderBuilder;
 import ass.manotoma.webserver01.http.util.StatusCode;
+import java.io.OutputStream;
 import java.util.Map;
 
 /**
@@ -15,6 +16,8 @@ public abstract class HttpResponse implements Response {
     private final static String CRLF = "\r\n";
     
     private HeaderBuilder builder = new HeaderBuilder();
+    
+    //////////  Methods  //////////
 
     public abstract String getStatusLine();
     
@@ -34,6 +37,8 @@ public abstract class HttpResponse implements Response {
     }
 
     public abstract byte[] getBody();
+    
+    public abstract void feedBodyToOutput(OutputStream os);
 
     public abstract boolean targetExists();
 
@@ -43,6 +48,8 @@ public abstract class HttpResponse implements Response {
     public String toString() {
         return "HttpResponse{" + getStatusLine() + '}';
     }
+    
+    //////////  Inner Enum  //////////
 
     public enum Header {
 

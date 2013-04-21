@@ -24,7 +24,7 @@ public class HttpResponseOutputStream extends OutputStream {
     public void write(HttpResponse httpResponse) throws IOException {
         os.write(httpResponse.getFormatedStatusLine().getBytes());
         os.write(httpResponse.getFormatedHeader().getBytes());
-        os.write(httpResponse.getBody());
+        httpResponse.feedBodyToOutput(os);
         os.close();
     }
 }

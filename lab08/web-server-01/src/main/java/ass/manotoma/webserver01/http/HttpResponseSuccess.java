@@ -7,15 +7,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpResponseSuccess extends HttpResponse {
-    
-    public static final Logger LOG = LoggerFactory.getLogger(HttpResponseSuccess.class);
 
+    public static final Logger LOG = LoggerFactory.getLogger(HttpResponseSuccess.class);
     private File target;
     private boolean exists;
     public static final String status = "HTTP/1.1 200 OK";
@@ -26,14 +27,13 @@ public class HttpResponseSuccess extends HttpResponse {
         this.target = target;
         this.exists = target.exists();
     }
-    
-    //////////  Getters  //////////
 
+    //////////  Getters  //////////
     @Override
     public StatusCode getStatusCode() {
         return StatusCode._200;
     }
-    
+
     @Override
     public String getStatusLine() {
         return status;
@@ -46,26 +46,42 @@ public class HttpResponseSuccess extends HttpResponse {
 
     @Override
     public byte[] getBody() {
+        if (body == null) {
+            createMassageBody();
+        }
         return body;
+    }
+
+    @Override
+    public void feedBodyToOutput(OutputStream os) {
+        FileInputStream fis = null;
+        try {
+
+            fis = new FileInputStream(target);
+            IOUtils.copy(fis, os);
+        } catch (IOException e) {
+            LOG.error("An error occured while creating massage body in {}, cannot find requested target file:"
+                    + e.getMessage(), this.getClass().getCanonicalName());
+            e.printStackTrace(System.out);
+        }
     }
 
     @Override
     public boolean targetExists() {
         return exists;
     }
-    
+
     @Override
-    public void buildResponse() throws Exception{
+    public void buildResponse() throws Exception {
         createHeaders();
-        createMassageBody();
+//        createMassageBody();
     }
-    
+
     //////////  Helper Methods  //////////
-    
-    private void createHeaders(){
+    private void createHeaders() {
         createContentType();
     }
-    
+
     private void createContentType() {
         String fileName = target.getAbsolutePath();
         if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
@@ -82,7 +98,7 @@ public class HttpResponseSuccess extends HttpResponse {
         }
     }
 
-    private void createMassageBody() throws FileNotFoundException, IOException {
+    private void createMassageBody() {
         FileInputStream fis = null;
         try {
 
@@ -92,9 +108,9 @@ public class HttpResponseSuccess extends HttpResponse {
                     + e.getMessage(), this.getClass().getCanonicalName());
             e.printStackTrace(System.out);
         }
+        //        IOUtils.toByteArray(fis);
         byte[] bucket = new byte[32 * 1024];
         BufferedInputStream bis = null;
-        //buffering to an in-memory stream makes no sense
         ByteArrayOutputStream result = null;
         try {
             bis = new BufferedInputStream(fis);
@@ -115,11 +131,5 @@ public class HttpResponseSuccess extends HttpResponse {
         }
         bucket = null; // GC
         body = result.toByteArray();
-//         uncomment to print content to console
-//                for (int i = 0; i < body.length; i++) {
-//                    byte b = body[i];
-//                    System.out.print((char)b);
-//                }
     }
-
 }
