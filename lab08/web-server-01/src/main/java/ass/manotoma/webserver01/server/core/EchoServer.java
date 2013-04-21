@@ -1,5 +1,6 @@
 package ass.manotoma.webserver01.server.core;
 
+import ass.manotoma.webserver01.Bootstrap;
 import ass.manotoma.webserver01.io.HttpRequestReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,6 +8,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,25 +18,35 @@ import org.slf4j.LoggerFactory;
  */
 public class EchoServer implements Server {
 
-    private static final int PORT = 4444;
+    private int port = 4444;
     public static final Logger LOG = LoggerFactory.getLogger(EchoServer.class);
+    private ServerSocket server;
 
-    public void serve() {
+    public EchoServer() {
+        init();
+    }
+
+    public void init() {
+        // set properties
+        LOG.info("Initializing {}..", this.getClass().getSimpleName());
+        port = new Integer(Bootstrap.properties.getProperty("port"));
+        LOG.info("Will use port [{}]", port);
+
+        // launch
         LOG.info("Launching web server..");
-        // listener socket
-        ServerSocket server = null;
         try {
-            LOG.info("Using port [{}]..", PORT);
-            server = new ServerSocket(PORT);
-            LOG.info("Server bound to port [{}] succesfully..", PORT);
+            LOG.info("Using port [{}]..", port);
+            server = new ServerSocket(port);
+            LOG.info("Server bound to port [{}] succesfully..", port);
         } catch (IOException ex) {
-            LOG.error("An error occured during binding server on port [{}]: {}", PORT, ex);
+            LOG.error("An error occured during binding server on port [{}]: {}", port, ex);
             LOG.info("Shuting down..");
             System.exit(1);
         }
-            // client connection socket
-            Socket client = null;
+    }
 
+    public void serve() {
+        Socket client = null;
         while (true) {
             try {
                 LOG.info("Waiting for the clients' requests on the address: [{}/{}]...", InetAddress.getLocalHost().getHostAddress(), server.getLocalPort());
@@ -51,11 +63,23 @@ public class EchoServer implements Server {
 
                 os.close();
                 is.close();
-                
+
             } catch (IOException e) {
                 LOG.error("Fail to accept connection from client [{}].", client.getInetAddress().getHostAddress());
             }
         }
-    }
+
 
     }
+
+    public void stop() {
+        try {
+            //Stop accepting requests.
+            server.close();
+        } catch (IOException e) {
+            LOG.error("An error occured in server shutdown: {}", e);
+            e.printStackTrace();
+        }
+        System.exit(0);
+    }
+}

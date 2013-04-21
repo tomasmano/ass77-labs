@@ -5,6 +5,7 @@ import ass.manotoma.webserver01.io.RequestReader;
 import java.io.IOException;
 import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import org.slf4j.Logger;
 
 /**
  *
@@ -12,7 +13,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  */
 public class HttpMsgsFactory {
     
-    public static final org.slf4j.Logger LOG = LoggerFactory.getLogger(HttpMsgsFactory.class);
+    public static final Logger LOG = LoggerFactory.getLogger(HttpMsgsFactory.class);
 
     private HttpMsgsFactory() {
         // to prevent instantiation
@@ -28,11 +29,14 @@ public class HttpMsgsFactory {
             }
             String[] first = firstLine.split("\\s+");
             request = new HttpRequest(first[0], first[1]);
-        } catch(IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
+            LOG.error("Error occured during parsing: {}", ex);
             throw new BadSyntaxException("Bad syntax");
-        }
-        catch (IOException ex) {
-            LOG.error("Error occured during parsing");
+        } catch (IOException ex) {
+            LOG.error("Error occured during parsing: {}", ex);
+        } catch (Exception ex) {
+            LOG.error("Error occured during parsing: {}", ex);
+            throw new BadSyntaxException("Bad syntax");
         }
         return request;
     }
