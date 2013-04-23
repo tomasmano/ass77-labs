@@ -22,6 +22,8 @@ public abstract class HttpResponse implements Response {
     public abstract String getStatusLine();
     
     public abstract StatusCode getStatusCode();
+    
+    public abstract String getTargetName();
 
     public abstract Map<Header, String> getHeaders();
 
@@ -38,9 +40,13 @@ public abstract class HttpResponse implements Response {
 
     public abstract byte[] getBody();
     
+    public abstract void setBody(byte[] data);
+    
     public abstract void feedBodyToOutput(OutputStream os);
 
     public abstract boolean targetExists();
+    
+    public abstract boolean isCached();
 
     public abstract void buildResponse() throws Exception;
 

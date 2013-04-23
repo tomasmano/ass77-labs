@@ -12,13 +12,11 @@ import java.io.InputStreamReader;
 public class HttpRequestReader implements RequestReader {
 
     private BufferedReader br;
-    private InputStream is;
 
     public HttpRequestReader() {
     }
 
     public HttpRequestReader(InputStream is) {
-        this.is = is;
         br = new BufferedReader(new InputStreamReader(is));
     }
 

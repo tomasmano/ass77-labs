@@ -22,8 +22,11 @@ public class ServerTask implements Runnable {
     }
 
     public void process() {
+        long start = System.currentTimeMillis();
         Response res = template.doTemplate();
-        LOG.debug("Job finished: Request processing succesfully finished");
+        long end = System.currentTimeMillis();
+        long diff = end - start;
+        LOG.debug("Job finished [{} ms]: Request processing succesfully finished", diff);
     }
     
 }

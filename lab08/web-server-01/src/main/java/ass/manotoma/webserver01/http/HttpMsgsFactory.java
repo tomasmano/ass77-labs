@@ -45,13 +45,30 @@ public class HttpMsgsFactory {
         LOG.debug("Creating response.. processing request [{}] ..", input);
         if (input == null) {
             LOG.debug("Request is null, creating 400 response..");
-            return new HttpResponseError(StatusCode._400);
+            return new HttpResponseError(StatusCode._400, "unknow");
         }
-        if (!input.getRequestTarget().exists()) {
+        if (!input.getTarget().exists()) {
             LOG.debug("Requestested targed doesn't exist, creating 404 response...");
-            return new HttpResponseError(StatusCode._404);
+            return new HttpResponseError(StatusCode._404, input.getTarget().getName());
         }
-        HttpResponse response = new HttpResponseSuccess(input.getRequestTarget());
+        HttpResponseSuccess response = new HttpResponseSuccess(input.getTarget());
+        response.buildResponse();
+        return response;
+    }
+    
+    public static HttpResponse createResponse(HttpRequest input, byte[] data) throws Exception{
+        LOG.debug("Creating response.. processing request [{}] ..", input);
+        if (input == null) {
+            LOG.debug("Request is null, creating 400 response..");
+            return new HttpResponseError(StatusCode._400, "unknow");
+        }
+        if (!input.getTarget().exists()) {
+            LOG.debug("Requestested targed doesn't exist, creating 404 response...");
+            return new HttpResponseError(StatusCode._404, input.getTarget().getName());
+        }
+        HttpResponseSuccess response = new HttpResponseSuccess(input.getTarget());
+        response.setBody(data); // set cached data
+        response.setCached(true);
         response.buildResponse();
         return response;
     }

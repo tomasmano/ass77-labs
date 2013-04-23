@@ -3,6 +3,7 @@ package ass.manotoma.webserver01.io;
 import ass.manotoma.webserver01.http.HttpResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -10,7 +11,7 @@ import java.io.OutputStream;
  */
 public class HttpResponseOutputStream extends OutputStream {
 
-    OutputStream os;
+    private OutputStream os;
 
     public HttpResponseOutputStream(OutputStream os) {
         this.os = os;
@@ -24,7 +25,12 @@ public class HttpResponseOutputStream extends OutputStream {
     public void write(HttpResponse httpResponse) throws IOException {
         os.write(httpResponse.getFormatedStatusLine().getBytes());
         os.write(httpResponse.getFormatedHeader().getBytes());
-        httpResponse.feedBodyToOutput(os);
+        if (httpResponse.isCached()) {
+//            os.write(httpResponse.getBody());
+            IOUtils.write(httpResponse.getBody(), os);
+        } else {
+            httpResponse.feedBodyToOutput(os);
+        }
         os.close();
     }
 }

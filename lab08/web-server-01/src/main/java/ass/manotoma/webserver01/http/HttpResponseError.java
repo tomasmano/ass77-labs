@@ -15,14 +15,21 @@ public class HttpResponseError extends HttpResponse {
     public static final Logger LOG = LoggerFactory.getLogger(HttpResponseError.class);
     private Map<Header, String> headers = new EnumMap<Header, String>(Header.class);
     private StatusCode code;
+    private String targetName;
 
-    public HttpResponseError(StatusCode code) {
+    public HttpResponseError(StatusCode code, String targetName) {
         this.code = code;
+        this.targetName = targetName;
     }
 
     @Override
     public StatusCode getStatusCode() {
         return code;
+    }
+
+    @Override
+    public String getTargetName() {
+        return targetName;
     }
 
     @Override
@@ -45,6 +52,11 @@ public class HttpResponseError extends HttpResponse {
     }
 
     @Override
+    public void setBody(byte[] data) {
+        // do nothing
+    }
+
+    @Override
     public void feedBodyToOutput(OutputStream out) {
         ByteArrayInputStream in = null;
         try {
@@ -59,6 +71,11 @@ public class HttpResponseError extends HttpResponse {
     @Override
     public boolean targetExists() {
         return false;
+    }
+
+    @Override
+    public boolean isCached() {
+        return true;
     }
 
     @Override

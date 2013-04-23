@@ -22,11 +22,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class HttpServerJobTemplate extends ServerJobTemplate {
+public class HttpServerJobCacheableTemplate extends ServerJobTemplate {
 
-    public static final Logger LOG = LoggerFactory.getLogger(HttpServerJobTemplate.class);
+    public static final Logger LOG = LoggerFactory.getLogger(HttpServerJobCacheableTemplate.class);
+    private CacheService cache = CacheFactory.getCache();
 
-    public HttpServerJobTemplate(InputStream input, OutputStream output) {
+    public HttpServerJobCacheableTemplate(InputStream input, OutputStream output) {
         super(new HttpRequestReader(input), output);
     }
 
@@ -46,7 +47,17 @@ public class HttpServerJobTemplate extends ServerJobTemplate {
         LOG.debug("Serving request {}..", req);
         HttpResponse res = null;
         try {
-            res = HttpMsgsFactory.createResponse((HttpRequest) req);
+            HttpRequest httpReq = (HttpRequest) req;
+            DataHolder data = cache.load(httpReq.getTarget().getPath());
+            if (data != null) {
+                res = HttpMsgsFactory.createResponse(httpReq, data.getBytes());
+                LOG.debug("Returning response with data [{} bytes] from cache", data.getBytes().length);
+            } else {
+                res = HttpMsgsFactory.createResponse(httpReq);
+                if (res.getStatusCode().equals(StatusCode._200)) {
+                    cache.store(httpReq.getTarget().getPath(), new DataHolder(res.getBody()));
+                }
+            }
             send(res);
         } catch (Exception ex) {
             LOG.error("An error occured during serving: {}", ex);

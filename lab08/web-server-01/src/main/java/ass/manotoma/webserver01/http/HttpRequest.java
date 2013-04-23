@@ -33,7 +33,7 @@ public class HttpRequest implements Request {
         this.method = method;
     }
 
-    public File getRequestTarget() {
+    public File getTarget() {
         return requestTarget;
     }
 

@@ -1,8 +1,6 @@
 package ass.manotoma.webserver01.http;
 
 import ass.manotoma.webserver01.http.util.StatusCode;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -22,6 +20,7 @@ public class HttpResponseSuccess extends HttpResponse {
     public static final String status = "HTTP/1.1 200 OK";
     private Map<Header, String> headers = new EnumMap<Header, String>(Header.class);
     private byte[] body;
+    private boolean isCached = false;
 
     public HttpResponseSuccess(File target) {
         this.target = target;
@@ -32,6 +31,11 @@ public class HttpResponseSuccess extends HttpResponse {
     @Override
     public StatusCode getStatusCode() {
         return StatusCode._200;
+    }
+
+    @Override
+    public String getTargetName() {
+        return target.getName();
     }
 
     @Override
@@ -50,6 +54,10 @@ public class HttpResponseSuccess extends HttpResponse {
             createMassageBody();
         }
         return body;
+    }
+
+    public void setBody(byte[] body) {
+        this.body = body;
     }
 
     @Override
@@ -72,6 +80,15 @@ public class HttpResponseSuccess extends HttpResponse {
     }
 
     @Override
+    public boolean isCached() {
+        return isCached;
+    }
+
+    public void setCached(boolean val) {
+        isCached = val;
+    }
+
+    @Override
     public void buildResponse() throws Exception {
         createHeaders();
 //        createMassageBody();
@@ -88,7 +105,7 @@ public class HttpResponseSuccess extends HttpResponse {
             headers.put(Header.CONTENT_TYPE, "text/html; charset=UTF-8");
             return;
         }
-        if (fileName.endsWith(".jpeg") || fileName.endsWith(".png") || fileName.endsWith(".gif")) {
+        if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg") || fileName.endsWith(".png") || fileName.endsWith(".gif")) {
             headers.put(Header.CONTENT_TYPE, "image/gif");
             return;
         }
@@ -108,28 +125,12 @@ public class HttpResponseSuccess extends HttpResponse {
                     + e.getMessage(), this.getClass().getCanonicalName());
             e.printStackTrace(System.out);
         }
-        //        IOUtils.toByteArray(fis);
-        byte[] bucket = new byte[32 * 1024];
-        BufferedInputStream bis = null;
-        ByteArrayOutputStream result = null;
         try {
-            bis = new BufferedInputStream(fis);
-            result = new ByteArrayOutputStream(bucket.length);
-            int bytesRead = 0;
-            while (bytesRead != -1) {
-                //aInput.read() returns -1, 0, or more :
-                bytesRead = bis.read(bucket);
-                if (bytesRead > 0) {
-                    result.write(bucket, 0, bytesRead);
-                }
-            }
-            bis.close();
+            body = IOUtils.toByteArray(fis);
         } catch (IOException e) {
             LOG.error("An error occured while creating massage body in {}, byte reading and writing operations was not succesfull:"
                     + e.getMessage(), this.getClass().getCanonicalName());
             e.printStackTrace(System.out);
         }
-        bucket = null; // GC
-        body = result.toByteArray();
     }
 }
