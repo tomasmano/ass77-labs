@@ -1,22 +1,21 @@
 package ass.manotoma.webserver01.cache;
 
-import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
 public class InMemoryCacheService implements CacheService {
-    
+
     public static final Logger LOG = LoggerFactory.getLogger(InMemoryCacheService.class);
-    
-    private Map<String, DataHolder> cache = new HashMap<String, DataHolder>();
-    
-    private InMemoryCacheService(){
-        LOG.info("Instantianting {}..", this.getClass().getSimpleName());
+    private Map<String, DataHolder> cache = new SoftHashMap<String, DataHolder>();
+//    private Cache<String, DataHolder> guavaCache = CacheBuilder.newBuilder().softValues().build();
+
+    private InMemoryCacheService() {
+        LOG.info("Instantianting {} using [{}] internally..", this.getClass().getSimpleName(), cache.getClass().getCanonicalName());
     }
 
     public DataHolder load(String filename) {
@@ -29,7 +28,6 @@ public class InMemoryCacheService implements CacheService {
     }
 
     public void remove(String filename) {
-        cache.remove(filename);
+//        cache.remove(filename);
     }
-    
 }

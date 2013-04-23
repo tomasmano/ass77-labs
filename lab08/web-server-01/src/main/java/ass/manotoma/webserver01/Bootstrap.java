@@ -22,7 +22,7 @@ public class Bootstrap {
 
     public static Properties properties = new Properties();
     public static final String CONFIG_PROPERTIES_LOCATION = "server-config.properties";
-    private static final String IN_MEMORY_CACHE_SERVICE_CLASS = "ass.manotoma.webserver01.cache.InMemoryCacheService";
+    public static final String IN_MEMORY_CACHE_SERVICE_CLASS = "ass.manotoma.webserver01.cache.InMemoryCacheService";
     public static final Logger LOG = LoggerFactory.getLogger(Bootstrap.class);
 
     public static void main(String[] args) {
