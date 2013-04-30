@@ -95,6 +95,10 @@ public class HttpMsgsFactory {
             LOG.debug("Requestested targed doesn't exist, creating 404 response...");
             return new HttpResponseError(StatusCode._404, input.getTarget().getName());
         }
+        if (input.isSecuredTarget() && !input.isAuthenticated()) {
+            LOG.debug("Requestested targed is secured and client authentication was not successfull, creating 404 response...");
+            return new HttpResponseError(StatusCode._401, input.getTarget().getName(), Title._401.getText(), Page._401.getText()).addHeader(HttpResponse.Header.WWW_AUTHENTICATE, Bootstrap.properties.getProperty("security_realm"));
+        }
         HttpResponseSuccess response = new HttpResponseSuccess(input.getTarget());
         response.setBody(data); // set cached data
         response.setCached(true);
