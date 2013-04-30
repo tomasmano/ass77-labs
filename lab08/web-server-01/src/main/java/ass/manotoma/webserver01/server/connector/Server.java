@@ -1,4 +1,4 @@
-package ass.manotoma.webserver01.server.core;
+package ass.manotoma.webserver01.server.connector;
 
 /**
  *

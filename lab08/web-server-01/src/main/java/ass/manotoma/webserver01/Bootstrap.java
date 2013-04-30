@@ -2,9 +2,9 @@ package ass.manotoma.webserver01;
 
 import ass.manotoma.webserver01.cache.CacheFactory;
 import ass.manotoma.webserver01.cache.CacheService;
-import ass.manotoma.webserver01.server.core.PoolingCachingWebServer;
-import ass.manotoma.webserver01.server.core.PoolingWebServer;
-import ass.manotoma.webserver01.server.core.Server;
+import ass.manotoma.webserver01.server.connector.PoolingCachingWebServer;
+import ass.manotoma.webserver01.server.connector.PoolingWebServer;
+import ass.manotoma.webserver01.server.connector.Server;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -22,22 +22,24 @@ public class Bootstrap {
 
     public static Properties properties = new Properties();
     public static final String CONFIG_PROPERTIES_LOCATION = "server-config.properties";
-    public static final String IN_MEMORY_CACHE_SERVICE_CLASS = "ass.manotoma.webserver01.cache.InMemoryCacheService";
     public static final Logger LOG = LoggerFactory.getLogger(Bootstrap.class);
 
     public static void main(String[] args) {
         // load properties
         try {
             properties.load(Bootstrap.class.getClassLoader().getResourceAsStream(CONFIG_PROPERTIES_LOCATION));
+            LOG.info("Using properties: {}", properties.entrySet());
         } catch (IOException ex) {
             LOG.error("An error occured during loading properties: {}", ex);
+            System.exit(-1);
         }
 
-        // prepare cache
+        // prepare cache (if requested)
         if (Boolean.parseBoolean(properties.getProperty("cache"))) {
             if (properties.getProperty("cache_method").equals("in_memory")) {
                 try {
-                    Class clazz = Bootstrap.class.getClassLoader().loadClass(IN_MEMORY_CACHE_SERVICE_CLASS);
+                    String cacheProviderFQN = properties.getProperty("cache_provider");
+                    Class clazz = Bootstrap.class.getClassLoader().loadClass(cacheProviderFQN);
                     Constructor<CacheService> constr = clazz.getDeclaredConstructor(new Class[0]);
                     constr.setAccessible(true);
                     CacheService instance = constr.newInstance(new Object[0]);

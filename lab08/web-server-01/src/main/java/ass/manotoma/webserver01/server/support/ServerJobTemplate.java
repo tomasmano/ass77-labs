@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ServerJobTemplate {
 
     public static final Logger LOG = LoggerFactory.getLogger(ServerJobTemplate.class);
+    
     private RequestReader parser;
     private OutputStream os;
 
@@ -20,6 +21,8 @@ public abstract class ServerJobTemplate {
         this.parser = parser;
         this.os = os;
     }
+    
+    //////////  Template method (general workflow structure)  //////////
 
     public Response doTemplate() {
         Request req = parse(parser);
@@ -29,6 +32,8 @@ public abstract class ServerJobTemplate {
         LOG.debug("Job finished: Request [{}] processing succesfully finished", req);
         return res;
     }
+    
+    //////////  Individual steps (placeholders)  //////////
 
     /**
      * Parse the given reader.
@@ -59,6 +64,8 @@ public abstract class ServerJobTemplate {
      * @param req response to be postprocessed
      */
     public abstract void postProcess(Response req);
+    
+    //////////  Getters / Setters  //////////
 
     public OutputStream getOutputStream() {
         return os;

@@ -40,14 +40,17 @@ public class HttpMsgsFactoryTest {
         // load properties
         try {
             properties.load(Bootstrap.class.getClassLoader().getResourceAsStream(Bootstrap.CONFIG_PROPERTIES_LOCATION));
+            LOG.info("Using properties: {}", properties.entrySet());
         } catch (IOException ex) {
             LOG.error("An error occured during loading properties: {}", ex);
+            System.exit(-1);
         }
-        // prepare cache
+        // prepare cache (if requested)
         if (Boolean.parseBoolean(properties.getProperty("cache"))) {
             if (properties.getProperty("cache_method").equals("in_memory")) {
                 try {
-                    Class clazz = Bootstrap.class.getClassLoader().loadClass(Bootstrap.IN_MEMORY_CACHE_SERVICE_CLASS);
+                    String cacheProviderFQN = properties.getProperty("cache_provider");
+                    Class clazz = Bootstrap.class.getClassLoader().loadClass(cacheProviderFQN);
                     Constructor<CacheService> constr = clazz.getDeclaredConstructor(new Class[0]);
                     constr.setAccessible(true);
                     CacheService instance = constr.newInstance(new Object[0]);

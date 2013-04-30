@@ -1,4 +1,4 @@
-package ass.manotoma.webserver01.server.core;
+package ass.manotoma.webserver01.server.connector;
 
 import ass.manotoma.webserver01.Bootstrap;
 import ass.manotoma.webserver01.io.HttpRequestReader;
@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +18,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class WebServer implements Server {
+public class PoolingWebServer implements Server {
 
-    private int port = 4444;
-    public static final Logger LOG = LoggerFactory.getLogger(WebServer.class);
+    private int port = 4444; //default value
+    private int poolSize = 10; //default value
+    public static final Logger LOG = LoggerFactory.getLogger(PoolingWebServer.class);
+    private ExecutorService executors;
     private ServerSocket server;
 
-    public WebServer() {
+    public PoolingWebServer() {
         init();
     }
 
@@ -32,8 +35,11 @@ public class WebServer implements Server {
         LOG.info("Initializing {}..", this.getClass().getSimpleName());
         port = new Integer(Bootstrap.properties.getProperty("port"));
         LOG.info("Will use port [{}]", port);
+        poolSize = new Integer(Bootstrap.properties.getProperty("pool_size"));
+        LOG.info("Will use pool size [{}]", poolSize);
+        executors = Executors.newFixedThreadPool(poolSize);
 
-        // launch
+        // launch server
         LOG.info("Launching web server..");
         try {
             LOG.info("Using port [{}]..", port);
@@ -47,28 +53,34 @@ public class WebServer implements Server {
     }
 
     public void serve() {
-        Socket client = null;
+
         while (true) {
             try {
-                LOG.info("Waiting for the clients' requests on the address: [{}/{}]...", InetAddress.getLocalHost().getHostAddress(), server.getLocalPort());
+                Socket client = null;
+                LOG.debug("Waiting for the clients' requests on the address: [{}/{}]...", InetAddress.getLocalHost().getHostAddress(), server.getLocalPort());
                 client = server.accept();
-                LOG.info("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
+                LOG.debug("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
 
-                Runnable task = new ServerTask(
-                        new HttpServerJobTemplate(
-                        client.getInputStream(),
-                        client.getOutputStream()));
-                task.run();
+                executors.submit(new ServerTask(
+                            new HttpServerJobTemplate(
+                                client.getInputStream(), 
+                                client.getOutputStream())
+                            )
+                        );
 
             } catch (IOException e) {
-                LOG.error("Fail to accept connection from client [{}].", client.getInetAddress().getHostAddress());
+                LOG.error("Fail to accept connection from client: {}", e);
             } finally {
 //                client.close();
             }
         }
+
+
     }
 
     public void stop() {
+        //Stop the executor service.
+        executors.shutdownNow();
         try {
             //Stop accepting requests.
             server.close();

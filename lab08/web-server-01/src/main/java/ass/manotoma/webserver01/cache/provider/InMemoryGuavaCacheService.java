@@ -1,6 +1,9 @@
-package ass.manotoma.webserver01.cache;
+package ass.manotoma.webserver01.cache.provider;
 
-import java.util.Map;
+import ass.manotoma.webserver01.cache.CacheService;
+import ass.manotoma.webserver01.cache.DataHolder;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,18 +11,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class InMemoryCacheService implements CacheService {
+public class InMemoryGuavaCacheService implements CacheService {
 
-    public static final Logger LOG = LoggerFactory.getLogger(InMemoryCacheService.class);
-    private Map<String, DataHolder> cache = new SoftHashMap<String, DataHolder>();
-//    private Cache<String, DataHolder> guavaCache = CacheBuilder.newBuilder().softValues().build();
+    public static final Logger LOG = LoggerFactory.getLogger(InMemoryGuavaCacheService.class);
+    private Cache<String, DataHolder> cache = CacheBuilder.newBuilder().softValues().build();
 
-    private InMemoryCacheService() {
+    private InMemoryGuavaCacheService() {
         LOG.info("Instantianting {} using [{}] internally..", this.getClass().getSimpleName(), cache.getClass().getCanonicalName());
     }
 
     public DataHolder load(String filename) {
-        return cache.get(filename);
+        return cache.getIfPresent(filename);
     }
 
     public void store(String filename, DataHolder data) {

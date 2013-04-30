@@ -1,9 +1,7 @@
-package ass.manotoma.webserver01.server.core;
+package ass.manotoma.webserver01.server.connector;
 
 import ass.manotoma.webserver01.Bootstrap;
-import ass.manotoma.webserver01.io.HttpRequestReader;
-import ass.manotoma.webserver01.server.support.HttpServerJobTemplate;
-import ass.manotoma.webserver01.server.support.ServerTask;
+import ass.manotoma.webserver01.server.support.HttpServerJobCacheableTemplate;
 import ass.manotoma.webserver01.server.support.ServerTask;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -18,15 +16,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class PoolingWebServer implements Server {
+public class PoolingCachingWebServer implements Server {
 
     private int port = 4444; //default value
     private int poolSize = 10; //default value
-    public static final Logger LOG = LoggerFactory.getLogger(PoolingWebServer.class);
+    public static final Logger LOG = LoggerFactory.getLogger(PoolingCachingWebServer.class);
     private ExecutorService executors;
     private ServerSocket server;
 
-    public PoolingWebServer() {
+    public PoolingCachingWebServer() {
         init();
     }
 
@@ -62,7 +60,7 @@ public class PoolingWebServer implements Server {
                 LOG.debug("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
 
                 executors.submit(new ServerTask(
-                            new HttpServerJobTemplate(
+                            new HttpServerJobCacheableTemplate(
                                 client.getInputStream(), 
                                 client.getOutputStream())
                             )

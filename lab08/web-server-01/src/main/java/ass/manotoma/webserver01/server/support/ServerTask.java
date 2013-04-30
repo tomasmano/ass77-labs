@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Server task. Command object.
  * 
  * @author Tomas Mano <tomasmano@gmail.com>
  */

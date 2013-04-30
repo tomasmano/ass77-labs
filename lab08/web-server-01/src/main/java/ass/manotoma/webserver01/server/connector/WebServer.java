@@ -1,10 +1,11 @@
-package ass.manotoma.webserver01.server.core;
+package ass.manotoma.webserver01.server.connector;
 
 import ass.manotoma.webserver01.Bootstrap;
 import ass.manotoma.webserver01.io.HttpRequestReader;
+import ass.manotoma.webserver01.server.support.HttpServerJobTemplate;
+import ass.manotoma.webserver01.server.support.ServerTask;
+import ass.manotoma.webserver01.server.support.ServerTask;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,13 +17,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class EchoServer implements Server {
+public class WebServer implements Server {
 
     private int port = 4444;
-    public static final Logger LOG = LoggerFactory.getLogger(EchoServer.class);
+    public static final Logger LOG = LoggerFactory.getLogger(WebServer.class);
     private ServerSocket server;
 
-    public EchoServer() {
+    public WebServer() {
         init();
     }
 
@@ -53,23 +54,18 @@ public class EchoServer implements Server {
                 client = server.accept();
                 LOG.info("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
 
-                OutputStream os = client.getOutputStream();
-                os.write(String.format("Hi client [%s]. How are you?%n", client.getInetAddress().getHostAddress()).getBytes());
-                InputStream is = client.getInputStream();
-
-                HttpRequestReader reader = new HttpRequestReader(is);
-                String clientMsg = reader.read();
-                os.write(String.format("Echoing your response: [%s]. Bye.%n", clientMsg).getBytes());
-
-                os.close();
-                is.close();
+                Runnable task = new ServerTask(
+                        new HttpServerJobTemplate(
+                        client.getInputStream(),
+                        client.getOutputStream()));
+                task.run();
 
             } catch (IOException e) {
                 LOG.error("Fail to accept connection from client [{}].", client.getInetAddress().getHostAddress());
+            } finally {
+//                client.close();
             }
         }
-
-
     }
 
     public void stop() {
