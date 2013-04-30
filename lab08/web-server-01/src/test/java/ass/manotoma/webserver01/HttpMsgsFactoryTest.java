@@ -3,12 +3,14 @@ package ass.manotoma.webserver01;
 import ass.manotoma.webserver01.cache.CacheFactory;
 import ass.manotoma.webserver01.cache.CacheService;
 import ass.manotoma.webserver01.cache.DataHolder;
-import ass.manotoma.webserver01.http.BadSyntaxException;
+import ass.manotoma.webserver01.http.exception.BadSyntaxException;
 import ass.manotoma.webserver01.http.HttpMsgsFactory;
 import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.http.HttpResponse;
 import ass.manotoma.webserver01.http.util.StatusCode;
 import ass.manotoma.webserver01.io.HttpRequestReader;
+import ass.manotoma.webserver01.security.SecurityFilter;
+import ass.manotoma.webserver01.server.support.HttpServerJobCacheableTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +27,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.codec.binary.Base64;
+import org.springframework.security.authentication.BadCredentialsException;
 
 /**
  *
@@ -33,53 +37,16 @@ import org.slf4j.LoggerFactory;
 public class HttpMsgsFactoryTest {
 
     public static final Logger LOG = LoggerFactory.getLogger(HttpMsgsFactoryTest.class);
-
+    
     @BeforeClass
     public static void setup() {
-        Properties properties = new Properties();
-        // load properties
-        try {
-            properties.load(Bootstrap.class.getClassLoader().getResourceAsStream(Bootstrap.CONFIG_PROPERTIES_LOCATION));
-            LOG.info("Using properties: {}", properties.entrySet());
-        } catch (IOException ex) {
-            LOG.error("An error occured during loading properties: {}", ex);
-            System.exit(-1);
-        }
-        // prepare cache (if requested)
-        if (Boolean.parseBoolean(properties.getProperty("cache"))) {
-            if (properties.getProperty("cache_method").equals("in_memory")) {
-                try {
-                    String cacheProviderFQN = properties.getProperty("cache_provider");
-                    Class clazz = Bootstrap.class.getClassLoader().loadClass(cacheProviderFQN);
-                    Constructor<CacheService> constr = clazz.getDeclaredConstructor(new Class[0]);
-                    constr.setAccessible(true);
-                    CacheService instance = constr.newInstance(new Object[0]);
-                    Field field = CacheFactory.class.getDeclaredField("cache");
-                    field.setAccessible(true);
-                    field.set(null, instance);
-                } catch (InstantiationException ex) {
-                    LOG.error("Couldn't instantiate class: {}", ex);
-                } catch (IllegalAccessException ex) {
-                    LOG.error("An exception occured during instantiaion: {}", ex);
-                } catch (ClassNotFoundException ex) {
-                    LOG.error("An exception occured during instantiaion: {}", ex);
-                } catch (NoSuchMethodException ex) {
-                    LOG.error("An exception occured during instantiaion: {}", ex);
-                } catch (NoSuchFieldException ex) {
-                    LOG.error("No field [cache] found in [{}]: {}", ex, CacheFactory.class.getCanonicalName());
-                } catch (InvocationTargetException ex) {
-                    LOG.error("An exception occured during instantiaion: {}", ex);
-                }
-            } else {
-                throw new Error("Caching enabled, but no valid caching method specified.");
-            }
-        }
+        Bootstrap.loadProperties();
     }
 
     @Test
     public void create_request_test() {
         //given
-        String request = "GET /index.xhtml HTTP/1.1 \nHost: test.cz \nUser-Agent: firefox \n";
+        String request = "GET /index.xhtml HTTP/1.1\nHost: test.cz\nUser-Agent: firefox\n";
         InputStream is = new ByteArrayInputStream(request.getBytes());
         HttpRequestReader reader = new HttpRequestReader(is);
 
@@ -89,12 +56,35 @@ public class HttpMsgsFactoryTest {
         //then
         assertEquals(HttpRequest.Method.GET, req.getMethod());
         assertEquals("index.xhtml", req.getTarget().getName());
+        assertEquals("test.cz", req.getHeaders().get(HttpRequest.Header.HOST.getFormated()));
+        assertEquals("firefox", req.getHeaders().get(HttpRequest.Header.USER_AGENT.getFormated()));
+        assertEquals(2, req.getHeaders().size());
+    }
+
+    @Test
+    public void create_secured_request_test() {
+        //given
+        String encoded = Base64.encodeBase64String("tomy:pass".getBytes());
+        String request = "GET /index.xhtml HTTP/1.1\nHost: test.cz\nUser-Agent: firefox\nAuthorization: Basic "+encoded;
+        InputStream is = new ByteArrayInputStream(request.getBytes());
+        HttpRequestReader reader = new HttpRequestReader(is);
+
+        //when
+        HttpRequest req = HttpMsgsFactory.createRequest(reader);
+
+        //then
+        assertEquals(HttpRequest.Method.GET, req.getMethod());
+        assertEquals("index.xhtml", req.getTarget().getName());
+        assertEquals("test.cz", req.getHeaders().get(HttpRequest.Header.HOST.getFormated()));
+        assertEquals("firefox", req.getHeaders().get(HttpRequest.Header.USER_AGENT.getFormated()));
+        assertEquals("Basic "+encoded, req.getHeaders().get(HttpRequest.Header.AUTHORIZATION.getFormated()));
+        assertEquals(3, req.getHeaders().size());
     }
 
     @Test
     public void create_response_test() throws Exception {
         //given
-        String request = "GET /test.html HTTP/1.1 \nHost: test.cz \nUser-Agent: firefox \n";
+        String request = "GET /test.html HTTP/1.1\nHost: test.cz\nUser-Agent: firefox\n";
         InputStream is = new ByteArrayInputStream(request.getBytes());
         HttpRequestReader reader = new HttpRequestReader(is);
         File file = new File("test.html");
@@ -113,9 +103,38 @@ public class HttpMsgsFactoryTest {
     }
 
     @Test
-    public void use_cached_response_test() throws Exception {
+    public void create_response_for_unauthenticated_secured_requests_test() throws Exception {
         //given
-        String request = "GET /test.html HTTP/1.1 \nHost: test.cz \nUser-Agent: firefox \n";
+        String encoded = Base64.encodeBase64String("tomy:baaad".getBytes());
+        String request = "GET /test-secured.html HTTP/1.1\nHost: test.cz\nUser-Agent: firefox\nAuthorization: Basic " + encoded;
+        InputStream is = new ByteArrayInputStream(request.getBytes());
+        HttpRequestReader reader = new HttpRequestReader(is);
+
+        //when
+        HttpRequest req = HttpMsgsFactory.createRequest(reader);
+        SecurityFilter filter = SecurityFilter.getInstance();
+        HttpRequest filtered = req;
+        try {
+            filter.filter(req);
+        } catch (BadCredentialsException e) {
+
+            req.setSecuredTarget(true);
+            req.setIsAuthenticated(false);
+
+            //then
+            HttpResponse res = HttpMsgsFactory.createResponse(filtered);
+            assertEquals(StatusCode._401, res.getStatusCode());
+            assertEquals(Bootstrap.properties.getProperty("security_realm"), res.getHeaders().get(HttpResponse.Header.WWW_AUTHENTICATE));
+        }
+    }
+
+    @Test
+    public void use_cached_response_test() throws Exception {
+        // cache must be enabled
+        Assume.assumeTrue(Boolean.parseBoolean(Bootstrap.properties.getProperty("cache")));
+        
+        //given
+        String request = "GET /test.html HTTP/1.1\nHost: test.cz\nUser-Agent: firefox\n";
         InputStream is = new ByteArrayInputStream(request.getBytes());
         HttpRequestReader reader = new HttpRequestReader(is);
         File file = new File("test.html");
@@ -123,6 +142,7 @@ public class HttpMsgsFactoryTest {
         //when
         HttpRequest req = HttpMsgsFactory.createRequest(reader);
         HttpResponse res = HttpMsgsFactory.createResponse(req);
+        System.out.println(">>>>>>>>. "+CacheFactory.getCache());
         CacheFactory.getCache().store(req.getTarget().getPath(), new DataHolder(res.getBody()));
         HttpResponse resCached = HttpMsgsFactory.createResponse(req, CacheFactory.getCache().load(req.getTarget().getPath()).getBytes());
 
@@ -142,7 +162,7 @@ public class HttpMsgsFactoryTest {
     @Test
     public void create_response_when_not_found_test() throws Exception {
         //given
-        String request = "GET /nonexistingfile.html HTTP/1.1 \nHost: test.cz \nUser-Agent: firefox \n";
+        String request = "GET /nonexistingfile.html HTTP/1.1\nHost: test.cz\nUser-Agent: firefox\n";
         InputStream is = new ByteArrayInputStream(request.getBytes());
         HttpRequestReader reader = new HttpRequestReader(is);
 
@@ -158,7 +178,7 @@ public class HttpMsgsFactoryTest {
     @Test(expected = BadSyntaxException.class)
     public void bad_syntax_test() {
         //given
-        String request = "VERYBADMETHOD /index.xhtml HTTP/1.1 \nHost: test.cz \nUser-Agent: firefox \n";
+        String request = "VERYBADMETHOD /index.xhtml HTTP/1.1\nHost: test.cz\nUser-Agent: firefox\n";
         InputStream is = new ByteArrayInputStream(request.getBytes());
         HttpRequestReader reader = new HttpRequestReader(is);
 

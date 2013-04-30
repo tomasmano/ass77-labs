@@ -3,7 +3,7 @@ package ass.manotoma.webserver01.server.support;
 import ass.manotoma.webserver01.cache.CacheFactory;
 import ass.manotoma.webserver01.cache.CacheService;
 import ass.manotoma.webserver01.cache.DataHolder;
-import ass.manotoma.webserver01.http.BadSyntaxException;
+import ass.manotoma.webserver01.http.exception.BadSyntaxException;
 import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.http.HttpMsgsFactory;
 import ass.manotoma.webserver01.http.HttpResponse;
@@ -11,11 +11,13 @@ import ass.manotoma.webserver01.http.util.StatusCode;
 import ass.manotoma.webserver01.io.HttpRequestReader;
 import ass.manotoma.webserver01.io.HttpResponseOutputStream;
 import ass.manotoma.webserver01.io.RequestReader;
+import ass.manotoma.webserver01.security.SecurityFilter;
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 
 /**
  * Represents server job template. Example of Template Pattern.
@@ -26,8 +28,10 @@ public class HttpServerJobCacheableTemplate extends ServerJobTemplate {
 
     public static final Logger LOG = LoggerFactory.getLogger(HttpServerJobCacheableTemplate.class);
     private CacheService cache = CacheFactory.getCache();
+    private SecurityFilter securityFilter = SecurityFilter.getInstance();
 
     public HttpServerJobCacheableTemplate(InputStream input, OutputStream output) {
+        // wrap input to HttpRequestReader
         super(new HttpRequestReader(input), output);
     }
 
@@ -41,21 +45,25 @@ public class HttpServerJobCacheableTemplate extends ServerJobTemplate {
     }
 
     public void preProcess(Request req) {
+        try {
+            securityFilter.filter((HttpRequest) req);
+        } catch (BadCredentialsException e) {
+        }
     }
 
-    public Response serve(Request req) {
-        LOG.debug("Serving request {}..", req);
+    public Response serve(Request r) {
+        LOG.debug("Serving request {}..", r);
         HttpResponse res = null;
         try {
-            HttpRequest httpReq = (HttpRequest) req;
-            DataHolder data = cache.load(httpReq.getTarget().getPath());
+            HttpRequest req = (HttpRequest) r;
+            DataHolder data = cache.load(req.getTarget().getPath());
             if (data != null) {
-                res = HttpMsgsFactory.createResponse(httpReq, data.getBytes());
+                res = HttpMsgsFactory.createResponse(req, data.getBytes());
                 LOG.debug("Returning response with data [{} bytes] from cache", data.getBytes().length);
             } else {
-                res = HttpMsgsFactory.createResponse(httpReq);
+                res = HttpMsgsFactory.createResponse(req);
                 if (res.getStatusCode().equals(StatusCode._200)) {
-                    cache.store(httpReq.getTarget().getPath(), new DataHolder(res.getBody()));
+                    cache.store(req.getTarget().getPath(), new DataHolder(res.getBody()));
                 }
             }
             send(res);
@@ -66,7 +74,7 @@ public class HttpServerJobCacheableTemplate extends ServerJobTemplate {
     }
 
     public void postProcess(Response res) {
-//        HttpResponsePrinter.print((HttpResponse) res);
+//        HttpResponsePrinter.printToConsole((HttpResponse) res);
     }
 
     private void send(Response res) {

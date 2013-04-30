@@ -26,6 +26,11 @@ public abstract class HttpResponse implements Response {
     public abstract String getTargetName();
 
     public abstract Map<Header, String> getHeaders();
+    
+    public HttpResponse addHeader(Header header, String value) {
+        getHeaders().put(header, value);
+        return this;
+    }
 
     public String getFormatedHeader() {
         for (Map.Entry<Header, String> entry : getHeaders().entrySet()) {
@@ -59,7 +64,9 @@ public abstract class HttpResponse implements Response {
 
     public enum Header {
 
-        CONTENT_TYPE("Content-Type");
+        CONTENT_TYPE("Content-Type"),
+        WWW_AUTHENTICATE("WWW-Authenticate");
+        
         private final String formated;
 
         private Header(String formated) {

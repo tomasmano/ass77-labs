@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,8 +54,8 @@ public class PoolingCachingWebServer implements Server {
     public void serve() {
 
         while (true) {
+            Socket client = null;
             try {
-                Socket client = null;
                 LOG.debug("Waiting for the clients' requests on the address: [{}/{}]...", InetAddress.getLocalHost().getHostAddress(), server.getLocalPort());
                 client = server.accept();
                 LOG.debug("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
@@ -69,10 +70,9 @@ public class PoolingCachingWebServer implements Server {
             } catch (IOException e) {
                 LOG.error("Fail to accept connection from client: {}", e);
             } finally {
-//                client.close();
+//                IOUtils.closeQuietly(client);
             }
         }
-
 
     }
 

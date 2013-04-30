@@ -8,6 +8,7 @@ public enum StatusCode {
 
     _200(200, "OK"),
     _400(400, "Bad Request"),
+    _401(401, "Authorization Required"),
     _404(404, "Not Found");
     private final int code;
     private final String description;

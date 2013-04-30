@@ -26,7 +26,7 @@ public class HttpResponsePrinter {
         return bytes.toString();
     }
     
-    public static void print(HttpResponse res) {
+    public static void printToConsole(HttpResponse res) {
         System.out.println("=========================");
         System.out.println("Printing response:");
         System.out.println("=========================");

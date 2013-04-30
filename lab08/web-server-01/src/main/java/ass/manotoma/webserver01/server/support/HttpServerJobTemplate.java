@@ -3,7 +3,7 @@ package ass.manotoma.webserver01.server.support;
 import ass.manotoma.webserver01.cache.CacheFactory;
 import ass.manotoma.webserver01.cache.CacheService;
 import ass.manotoma.webserver01.cache.DataHolder;
-import ass.manotoma.webserver01.http.BadSyntaxException;
+import ass.manotoma.webserver01.http.exception.BadSyntaxException;
 import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.http.HttpMsgsFactory;
 import ass.manotoma.webserver01.http.HttpResponse;

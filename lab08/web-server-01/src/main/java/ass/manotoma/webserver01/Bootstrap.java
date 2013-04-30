@@ -24,7 +24,7 @@ public class Bootstrap {
     public static final String CONFIG_PROPERTIES_LOCATION = "server-config.properties";
     public static final Logger LOG = LoggerFactory.getLogger(Bootstrap.class);
 
-    public static void main(String[] args) {
+    public static void loadProperties() {
         // load properties
         try {
             properties.load(Bootstrap.class.getClassLoader().getResourceAsStream(CONFIG_PROPERTIES_LOCATION));
@@ -63,7 +63,11 @@ public class Bootstrap {
                 throw new Error("Caching enabled, but no valid caching method specified.");
             }
         }
-        
+    }
+
+    public static void main(String[] args) {
+        loadProperties();
+
         // create server instance
         Server server = null;
         if (Boolean.parseBoolean(properties.getProperty("cache"))) {

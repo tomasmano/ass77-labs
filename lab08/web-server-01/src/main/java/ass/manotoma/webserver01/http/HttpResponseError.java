@@ -16,10 +16,20 @@ public class HttpResponseError extends HttpResponse {
     private Map<Header, String> headers = new EnumMap<Header, String>(Header.class);
     private StatusCode code;
     private String targetName;
+    private String title;
+    private String page;
+    
 
     public HttpResponseError(StatusCode code, String targetName) {
         this.code = code;
         this.targetName = targetName;
+    }
+
+    public HttpResponseError(StatusCode code, String targetName, String title, String page) {
+        this.code = code;
+        this.targetName = targetName;
+        this.title = title;
+        this.page = page;
     }
 
     @Override
@@ -47,7 +57,7 @@ public class HttpResponseError extends HttpResponse {
     @Override
     public byte[] getBody() {
         StringBuilder body = new StringBuilder("");
-        body.append("<html><head><title>File not found</title></head><body><h1>").append(code.code()).append("</h1><p>File not found.</p></body></html>");
+        body.append(title).append(code.code()).append(page);
         return new String(body).getBytes();
     }
 
@@ -82,4 +92,5 @@ public class HttpResponseError extends HttpResponse {
     public void buildResponse() throws Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
 }
