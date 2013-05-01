@@ -2,9 +2,9 @@ package ass.manotoma.webserver01;
 
 import ass.manotoma.webserver01.cache.CacheFactory;
 import ass.manotoma.webserver01.cache.CacheService;
-import ass.manotoma.webserver01.server.connector.PoolingCachingWebServer;
-import ass.manotoma.webserver01.server.connector.PoolingWebServer;
-import ass.manotoma.webserver01.server.connector.Server;
+import ass.manotoma.webserver01.server.acceptor.PoolingCachingWebServer;
+import ass.manotoma.webserver01.server.acceptor.PoolingWebServer;
+import ass.manotoma.webserver01.server.acceptor.Server;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -14,7 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Bootstrap for server.
+ * Bootstrap for server. Initializes the network facility along with the current
+ * configuration.
  *
  * @author Tomas Mano
  */

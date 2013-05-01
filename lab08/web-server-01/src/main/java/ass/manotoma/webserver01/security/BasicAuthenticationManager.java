@@ -23,12 +23,6 @@ public class BasicAuthenticationManager implements AuthenticationManager {
     
     public static final Logger LOG = LoggerFactory.getLogger(BasicAuthenticationManager.class);
     
-    static final List<GrantedAuthority> AUTHORITIES = new ArrayList<GrantedAuthority>();
-
-    static {
-        AUTHORITIES.add(new SimpleGrantedAuthority("ROLE_USER"));
-    }
-
     private UserDetailsService userService = new InMemoryUserService();
 
     public BasicAuthenticationManager() {
@@ -46,7 +40,7 @@ public class BasicAuthenticationManager implements AuthenticationManager {
         if (auth.getCredentials().toString().equals(details.getPassword())) {
             LOG.debug("Authentication succesfull for user [{}]", auth.getName());
             return new UsernamePasswordAuthenticationToken(details,
-                    auth.getCredentials(), AUTHORITIES);
+                    auth.getCredentials(), details.getAuthorities());
         }
         throw new BadCredentialsException("Bad Credentials");
     }

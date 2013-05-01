@@ -88,9 +88,5 @@ public class HttpResponseError extends HttpResponse {
         return true;
     }
 
-    @Override
-    public void buildResponse() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     
 }

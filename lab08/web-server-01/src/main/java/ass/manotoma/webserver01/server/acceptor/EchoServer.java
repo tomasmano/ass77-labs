@@ -1,4 +1,4 @@
-package ass.manotoma.webserver01.server.connector;
+package ass.manotoma.webserver01.server.acceptor;
 
 import ass.manotoma.webserver01.Bootstrap;
 import ass.manotoma.webserver01.io.HttpRequestReader;

@@ -1,9 +1,7 @@
-package ass.manotoma.webserver01.server.connector;
+package ass.manotoma.webserver01.server.acceptor;
 
 import ass.manotoma.webserver01.Bootstrap;
-import ass.manotoma.webserver01.io.HttpRequestReader;
-import ass.manotoma.webserver01.server.support.HttpServerJobTemplate;
-import ass.manotoma.webserver01.server.support.ServerTask;
+import ass.manotoma.webserver01.server.support.HttpServerJobCacheableTemplate;
 import ass.manotoma.webserver01.server.support.ServerTask;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -15,18 +13,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Waits for and accepts incoming requests. It encapsulates the different
+ * concurrency policies for simultaneous access etc.
+ * 
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class PoolingWebServer implements Server {
+public class PoolingCachingWebServer implements Server {
 
     private int port = 4444; //default value
     private int poolSize = 10; //default value
-    public static final Logger LOG = LoggerFactory.getLogger(PoolingWebServer.class);
+    public static final Logger LOG = LoggerFactory.getLogger(PoolingCachingWebServer.class);
     private ExecutorService executors;
     private ServerSocket server;
 
-    public PoolingWebServer() {
+    public PoolingCachingWebServer() {
         init();
     }
 
@@ -55,14 +55,14 @@ public class PoolingWebServer implements Server {
     public void serve() {
 
         while (true) {
+            Socket client = null;
             try {
-                Socket client = null;
                 LOG.debug("Waiting for the clients' requests on the address: [{}/{}]...", InetAddress.getLocalHost().getHostAddress(), server.getLocalPort());
                 client = server.accept();
                 LOG.debug("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
 
                 executors.submit(new ServerTask(
-                            new HttpServerJobTemplate(
+                            new HttpServerJobCacheableTemplate(
                                 client.getInputStream(), 
                                 client.getOutputStream())
                             )
@@ -71,10 +71,9 @@ public class PoolingWebServer implements Server {
             } catch (IOException e) {
                 LOG.error("Fail to accept connection from client: {}", e);
             } finally {
-//                client.close();
+//                IOUtils.closeQuietly(client);
             }
         }
-
 
     }
 

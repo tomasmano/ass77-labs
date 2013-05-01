@@ -17,6 +17,8 @@ public abstract class HttpResponse implements Response {
     
     private HeaderBuilder builder = new HeaderBuilder();
     
+    private boolean cached = false;
+    
     //////////  Methods  //////////
 
     public abstract String getStatusLine();
@@ -51,14 +53,19 @@ public abstract class HttpResponse implements Response {
 
     public abstract boolean targetExists();
     
-    public abstract boolean isCached();
+   public boolean isCached(){
+       return cached;
+   }
 
-    public abstract void buildResponse() throws Exception;
+    public void setCached(boolean cached) {
+        this.cached = cached;
+    }
 
     @Override
     public String toString() {
         return "HttpResponse{" + getStatusLine() + '}';
     }
+
     
     //////////  Inner Enum  //////////
 

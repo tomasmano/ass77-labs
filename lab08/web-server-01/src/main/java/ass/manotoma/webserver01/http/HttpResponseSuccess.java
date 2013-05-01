@@ -20,11 +20,11 @@ public class HttpResponseSuccess extends HttpResponse {
     public static final String status = "HTTP/1.1 200 OK";
     private Map<Header, String> headers = new EnumMap<Header, String>(Header.class);
     private byte[] body;
-    private boolean isCached = false;
 
     public HttpResponseSuccess(File target) {
         this.target = target;
         this.exists = target.exists();
+        createContentType();    
     }
 
     //////////  Getters  //////////
@@ -79,25 +79,8 @@ public class HttpResponseSuccess extends HttpResponse {
         return exists;
     }
 
-    @Override
-    public boolean isCached() {
-        return isCached;
-    }
-
-    public void setCached(boolean val) {
-        isCached = val;
-    }
-
-    @Override
-    public void buildResponse() throws Exception {
-        createHeaders();
-//        createMassageBody();
-    }
-
     //////////  Helper Methods  //////////
-    private void createHeaders() {
-        createContentType();
-    }
+
 
     private void createContentType() {
         String fileName = target.getAbsolutePath();

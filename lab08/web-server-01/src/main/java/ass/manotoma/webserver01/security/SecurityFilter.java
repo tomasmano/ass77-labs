@@ -30,12 +30,12 @@ public class SecurityFilter {
         if (interceptor.isApplied(req.getTarget().getName())) {
             req.setSecuredTarget(true);
 
-            String authHeader = req.getHeaders().get(HttpRequest.Header.AUTHORIZATION.getFormated());
-            if (authHeader == null) {
+            String hValue = req.getHeaders().get(HttpRequest.Header.AUTHORIZATION.getFormated());
+            if (hValue == null) {
                 req.setIsAuthenticated(false);
                 return req;
             }
-            String[] credentials = convertToCredentials(authHeader);
+            String[] credentials = convertToCredentials(hValue);
 
             Authentication request = new UsernamePasswordAuthenticationToken(credentials[0], credentials[1]);
             Authentication auth = am.authenticate(request);
@@ -47,8 +47,14 @@ public class SecurityFilter {
         return req;
     }
 
-    public String[] convertToCredentials(String authHeader) {
-        String encoded = authHeader.split(" ")[1];
+    /**
+     * Retrieve credentials from value of the given Authentication Header.
+     * 
+     * @param hValue authentication header value
+     * @return credentials (username & password)
+     */
+    private String[] convertToCredentials(String hValue) {
+        String encoded = hValue.split(" ")[1];
         byte[] decodedBytes = Base64.decodeBase64(encoded.getBytes());
         String decoded = StringUtils.newStringUtf8(decodedBytes);
         return decoded.split(":");

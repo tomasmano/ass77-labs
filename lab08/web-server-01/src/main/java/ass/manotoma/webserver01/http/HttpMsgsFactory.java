@@ -74,7 +74,6 @@ public class HttpMsgsFactory {
             return new HttpResponseError(StatusCode._401, input.getTarget().getName(), Title._401.getText(), Page._401.getText()).addHeader(HttpResponse.Header.WWW_AUTHENTICATE, Bootstrap.properties.getProperty("security_realm"));
         }
         HttpResponseSuccess response = new HttpResponseSuccess(input.getTarget());
-        response.buildResponse();
         return response;
     }
 
@@ -86,24 +85,10 @@ public class HttpMsgsFactory {
      * @return HttpResponse
      */
     public static HttpResponse createResponse(HttpRequest input, byte[] data) throws Exception {
-        LOG.debug("Creating response.. processing request [{}] ..", input);
-        if (input == null) {
-            LOG.debug("Request is null, creating 400 response..");
-            return new HttpResponseError(StatusCode._400, "unknow");
-        }
-        if (!input.getTarget().exists()) {
-            LOG.debug("Requestested targed doesn't exist, creating 404 response...");
-            return new HttpResponseError(StatusCode._404, input.getTarget().getName());
-        }
-        if (input.isSecuredTarget() && !input.isAuthenticated()) {
-            LOG.debug("Requestested targed is secured and client authentication was not successfull, creating 404 response...");
-            return new HttpResponseError(StatusCode._401, input.getTarget().getName(), Title._401.getText(), Page._401.getText()).addHeader(HttpResponse.Header.WWW_AUTHENTICATE, Bootstrap.properties.getProperty("security_realm"));
-        }
-        HttpResponseSuccess response = new HttpResponseSuccess(input.getTarget());
-        response.setBody(data); // set cached data
-        response.setCached(true);
-        response.buildResponse();
-        return response;
+        HttpResponse res = createResponse(input);
+        res.setBody(data); // set cached data
+        res.setCached(true);
+        return res;
     }
 
     //////////  Inner Enums  //////////
