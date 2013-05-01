@@ -59,7 +59,7 @@ public class HttpMsgsFactory {
      * @param input input req
      * @return HttpResponse
      */
-    public static HttpResponse createResponse(HttpRequest input) throws Exception {
+    public static HttpResponse createResponse(HttpRequest input) {
         LOG.debug("Creating response.. processing request [{}] ..", input);
         if (input == null) {
             LOG.debug("Request is null, creating 400 response..");
@@ -84,7 +84,7 @@ public class HttpMsgsFactory {
      * @param data cached data
      * @return HttpResponse
      */
-    public static HttpResponse createResponse(HttpRequest input, byte[] data) throws Exception {
+    public static HttpResponse createResponse(HttpRequest input, byte[] data) {
         HttpResponse res = createResponse(input);
         res.setBody(data); // set cached data
         res.setCached(true);
