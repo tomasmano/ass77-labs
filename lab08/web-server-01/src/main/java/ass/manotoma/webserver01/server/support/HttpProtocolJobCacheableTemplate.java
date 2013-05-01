@@ -4,19 +4,17 @@ import ass.manotoma.webserver01.cache.CacheFactory;
 import ass.manotoma.webserver01.cache.CacheService;
 import ass.manotoma.webserver01.cache.DataHolder;
 import ass.manotoma.webserver01.cache.ResponseStorage;
-import ass.manotoma.webserver01.http.exception.BadSyntaxException;
 import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.http.HttpMsgsFactory;
 import ass.manotoma.webserver01.http.HttpResponse;
+import ass.manotoma.webserver01.http.exception.BadSyntaxException;
 import ass.manotoma.webserver01.io.HttpRequestReader;
-import ass.manotoma.webserver01.io.HttpResponseOutputStream;
 import ass.manotoma.webserver01.io.RequestReader;
 import ass.manotoma.webserver01.security.SecurityFilter;
 import ass.manotoma.webserver01.server.processor.provider.HttpPostProcessorsProvider;
 import ass.manotoma.webserver01.server.processor.provider.HttpPreProcessorsProvider;
 import ass.manotoma.webserver01.server.processor.provider.PostProcessorsProvider;
 import ass.manotoma.webserver01.server.processor.provider.PreProcessorsProvider;
-import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import org.slf4j.Logger;
@@ -38,10 +36,10 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
     private static PreProcessorsProvider<HttpRequest> preProcessors = HttpPreProcessorsProvider.getInstance();
     private static PostProcessorsProvider<HttpRequest, HttpResponse> postProcessors = HttpPostProcessorsProvider.getInstance();
     
-    // Set up processors
+    // Add custom processors
     static{
-        preProcessors.add(SecurityFilter.getInstance());
-        postProcessors.add(ResponseStorage.getInstance());
+        preProcessors.add(SecurityFilter.getInstance()); // it handles authentication if necessary
+        postProcessors.add(ResponseStorage.getInstance()); // it stores data to cache if necessary
     }
 
     public HttpProtocolJobCacheableTemplate(InputStream input, OutputStream output) {
@@ -67,19 +65,8 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
     public HttpResponse serve(HttpRequest req) {
         LOG.debug("Serving request {}..", req);
         HttpResponse res = null;
-        try {
-            DataHolder data = cache.load(req.getTarget().getPath());
-            if (data != null) { 
-                // data not null - create response with cached data
-                res = HttpMsgsFactory.createResponse(req, data.getBytes());
-                LOG.debug("Returning response with data [{} bytes] from cache", data.getBytes().length);
-            } else {
-                res = HttpMsgsFactory.createResponse(req);
-            }
-            send(res);
-        } catch (Exception ex) {
-            LOG.error("An error occured during serving: {}", ex);
-        }
+        res = lookupCacheOrLoadUncached(req);
+        send(res);
         return res;
     }
 
@@ -90,15 +77,17 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
     //////////  Helper method  //////////
 
     private void send(HttpResponse res) {
-        LOG.debug("Sending response [{}].. ", res);
-        HttpResponseOutputStream httpOutputStream = null;
-        try {
-            httpOutputStream = new HttpResponseOutputStream(new BufferedOutputStream(getOutputStream()));
-            httpOutputStream.write(res);
-            httpOutputStream.close();
-        } catch (Exception ex) {
-            LOG.error("An error occured while sending response: " + ex.getMessage());
-            ex.printStackTrace(System.out);
+        HttpResponseSender.getInstance().send(res, getOutputStream());
+    }
+
+    private HttpResponse lookupCacheOrLoadUncached(HttpRequest req) {
+        DataHolder data = cache.load(req.getTarget().getPath());
+        if (data != null) {
+            // data not null - create response with cached data
+            LOG.debug("Returning response with data [{} bytes] from cache", data.getBytes().length);
+            return HttpMsgsFactory.createResponse(req, data.getBytes());
+        } else {
+            return HttpMsgsFactory.createResponse(req);
         }
     }
 }
