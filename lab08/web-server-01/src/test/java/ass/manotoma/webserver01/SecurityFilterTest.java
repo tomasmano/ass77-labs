@@ -33,7 +33,7 @@ public class SecurityFilterTest {
         //when
         HttpRequest req = HttpMsgsFactory.createRequest(reader);
         SecurityFilter filer = SecurityFilter.getInstance();
-        HttpRequest filtered = filer.filter(req);
+        HttpRequest filtered = filer.preProcess(req);
         
         //then
         assertTrue(filtered.isSecuredTarget());

@@ -115,7 +115,7 @@ public class HttpMsgsFactoryTest {
         SecurityFilter filter = SecurityFilter.getInstance();
         HttpRequest filtered = req;
         try {
-            filter.filter(req);
+            filter.preProcess(req);
         } catch (BadCredentialsException e) {
 
             req.setSecuredTarget(true);

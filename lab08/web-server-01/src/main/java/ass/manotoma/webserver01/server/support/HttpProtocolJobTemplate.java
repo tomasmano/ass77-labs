@@ -50,7 +50,7 @@ public class HttpProtocolJobTemplate extends ServerJobTemplate<HttpRequest, Http
         return res;
     }
 
-    public void postProcess(HttpResponse res) {
+    public void postProcess(HttpRequest req, HttpResponse res) {
 //        HttpResponsePrinter.print((HttpResponse) res);
     }
 

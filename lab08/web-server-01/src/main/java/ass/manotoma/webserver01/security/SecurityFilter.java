@@ -1,6 +1,7 @@
 package ass.manotoma.webserver01.security;
 
 import ass.manotoma.webserver01.http.HttpRequest;
+import ass.manotoma.webserver01.server.processor.PreProcessor;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class SecurityFilter {
+public class SecurityFilter implements PreProcessor<HttpRequest> {
 
     private static SecurityFilter INSTANCE = new SecurityFilter();
     private SecurityInterceptor interceptor = PropertiesSecurityInterceptor.getInstance();
@@ -26,7 +27,8 @@ public class SecurityFilter {
         return INSTANCE;
     }
 
-    public HttpRequest filter(HttpRequest req) {
+    @Override
+    public HttpRequest preProcess(HttpRequest req) {
         if (interceptor.isApplied(req.getTarget().getName())) {
             req.setSecuredTarget(true);
 

@@ -24,11 +24,11 @@ public abstract class ServerJobTemplate<RQ extends Request, RSP extends Response
     
     //////////  Template method (general workflow structure)  //////////
 
-    public Response doTemplate() {
+    public RSP doTemplate() {
         RQ req = parse(parser);
         preProcess(req);
         RSP res = serve(req);
-        postProcess(res);
+        postProcess(req, res);
         LOG.debug("Job finished: Request [{}] processing succesfully finished", req);
         return res;
     }
@@ -63,7 +63,7 @@ public abstract class ServerJobTemplate<RQ extends Request, RSP extends Response
      *
      * @param res response to be postprocessed
      */
-    public abstract void postProcess(RSP res);
+    public abstract void postProcess(RQ req, RSP res);
     
     //////////  Getters / Setters  //////////
 

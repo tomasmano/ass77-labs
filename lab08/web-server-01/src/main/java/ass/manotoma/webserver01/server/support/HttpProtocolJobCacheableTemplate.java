@@ -3,21 +3,24 @@ package ass.manotoma.webserver01.server.support;
 import ass.manotoma.webserver01.cache.CacheFactory;
 import ass.manotoma.webserver01.cache.CacheService;
 import ass.manotoma.webserver01.cache.DataHolder;
+import ass.manotoma.webserver01.cache.ResponseStorage;
 import ass.manotoma.webserver01.http.exception.BadSyntaxException;
 import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.http.HttpMsgsFactory;
 import ass.manotoma.webserver01.http.HttpResponse;
-import ass.manotoma.webserver01.http.util.StatusCode;
 import ass.manotoma.webserver01.io.HttpRequestReader;
 import ass.manotoma.webserver01.io.HttpResponseOutputStream;
 import ass.manotoma.webserver01.io.RequestReader;
 import ass.manotoma.webserver01.security.SecurityFilter;
+import ass.manotoma.webserver01.server.processor.provider.HttpPostProcessorsProvider;
+import ass.manotoma.webserver01.server.processor.provider.HttpPreProcessorsProvider;
+import ass.manotoma.webserver01.server.processor.provider.PostProcessorsProvider;
+import ass.manotoma.webserver01.server.processor.provider.PreProcessorsProvider;
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.BadCredentialsException;
 
 /**
  * Represents server job template. Example of Template Pattern.
@@ -27,11 +30,18 @@ import org.springframework.security.authentication.BadCredentialsException;
 public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequest, HttpResponse> {
 
     public static final Logger LOG = LoggerFactory.getLogger(HttpProtocolJobCacheableTemplate.class);
-    private CacheService cache = CacheFactory.getCache();
-    private SecurityFilter securityFilter = SecurityFilter.getInstance();
+    
+    private static CacheService cache = CacheFactory.getCache();
+    private static PreProcessorsProvider<HttpRequest> preProcessors = HttpPreProcessorsProvider.getInstance();
+    private static PostProcessorsProvider<HttpRequest, HttpResponse> postProcessors = HttpPostProcessorsProvider.getInstance();
+    
+    static{
+        preProcessors.add(SecurityFilter.getInstance());
+        postProcessors.add(ResponseStorage.getInstance());
+    }
 
     public HttpProtocolJobCacheableTemplate(InputStream input, OutputStream output) {
-        // wrap input to HttpRequestReader
+        // wrap InputStream to HttpRequestReader
         super(new HttpRequestReader(input), output);
     }
 
@@ -45,10 +55,7 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
     }
 
     public void preProcess(HttpRequest req) {
-        try {
-            securityFilter.filter(req);
-        } catch (BadCredentialsException e) {
-        }
+        preProcessors.preProcess(req);
     }
 
     public HttpResponse serve(HttpRequest req) {
@@ -62,9 +69,6 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
                 LOG.debug("Returning response with data [{} bytes] from cache", data.getBytes().length);
             } else {
                 res = HttpMsgsFactory.createResponse(req);
-                if (res.getStatusCode().equals(StatusCode._200)) {
-                    cache.store(req.getTarget().getPath(), new DataHolder(res.getBody()));
-                }
             }
             send(res);
         } catch (Exception ex) {
@@ -73,8 +77,8 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
         return res;
     }
 
-    public void postProcess(HttpResponse res) {
-//        HttpResponsePrinter.printToConsole((HttpResponse) res);
+    public void postProcess(HttpRequest req, HttpResponse res) {
+        postProcessors.postProcess(req, res);
     }
 
     private void send(HttpResponse res) {
