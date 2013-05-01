@@ -5,9 +5,7 @@ import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.http.HttpMsgsFactory;
 import ass.manotoma.webserver01.http.HttpResponse;
 import ass.manotoma.webserver01.io.HttpRequestReader;
-import ass.manotoma.webserver01.io.HttpResponseOutputStream;
 import ass.manotoma.webserver01.io.RequestReader;
-import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import org.slf4j.Logger;
@@ -40,30 +38,15 @@ public class HttpProtocolJobTemplate extends ServerJobTemplate<HttpRequest, Http
 
     public HttpResponse serve(HttpRequest req) {
         LOG.debug("Serving request {}..", req);
-        HttpResponse res = null;
-        try {
-            res = HttpMsgsFactory.createResponse(req);
-            send(res);
-        } catch (Exception ex) {
-            LOG.error("An error occured during serving: {}", ex);
-        }
+        HttpResponse res = HttpMsgsFactory.createResponse(req);
+        send(res);
         return res;
     }
 
     public void postProcess(HttpRequest req, HttpResponse res) {
-//        HttpResponsePrinter.print((HttpResponse) res);
     }
 
     private void send(HttpResponse res) {
-        LOG.debug("Sending response [{}].. ", res);
-        HttpResponseOutputStream httpOutputStream = null;
-        try {
-            httpOutputStream = new HttpResponseOutputStream(new BufferedOutputStream(getOutputStream()));
-            httpOutputStream.write((HttpResponse) res);
-            httpOutputStream.close();
-        } catch (Exception ex) {
-            LOG.error("An error occured while sending response: " + ex.getMessage());
-            ex.printStackTrace(System.out);
-        }
+        HttpResponseSender.getInstance().send(res, getOutputStream());
     }
 }
