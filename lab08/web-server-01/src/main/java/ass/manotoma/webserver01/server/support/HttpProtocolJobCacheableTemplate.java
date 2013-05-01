@@ -31,10 +31,14 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
 
     public static final Logger LOG = LoggerFactory.getLogger(HttpProtocolJobCacheableTemplate.class);
     
+    // Cache
     private static CacheService cache = CacheFactory.getCache();
+    
+    // Processors
     private static PreProcessorsProvider<HttpRequest> preProcessors = HttpPreProcessorsProvider.getInstance();
     private static PostProcessorsProvider<HttpRequest, HttpResponse> postProcessors = HttpPostProcessorsProvider.getInstance();
     
+    // Set up processors
     static{
         preProcessors.add(SecurityFilter.getInstance());
         postProcessors.add(ResponseStorage.getInstance());
@@ -44,6 +48,8 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
         // wrap InputStream to HttpRequestReader
         super(new HttpRequestReader(input), output);
     }
+    
+    //////////  Individual steps (placeholders)  //////////
 
     public HttpRequest parse(RequestReader parser) {
         HttpRequest req = null;
@@ -80,6 +86,8 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
     public void postProcess(HttpRequest req, HttpResponse res) {
         postProcessors.postProcess(req, res);
     }
+    
+    //////////  Helper method  //////////
 
     private void send(HttpResponse res) {
         LOG.debug("Sending response [{}].. ", res);
