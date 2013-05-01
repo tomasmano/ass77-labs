@@ -1,7 +1,7 @@
 package ass.manotoma.webserver01.server.acceptor;
 
 import ass.manotoma.webserver01.Bootstrap;
-import ass.manotoma.webserver01.server.support.HttpServerJobCacheableTemplate;
+import ass.manotoma.webserver01.server.support.HttpProtocolJobCacheableTemplate;
 import ass.manotoma.webserver01.server.support.ServerTask;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -62,7 +62,7 @@ public class PoolingCachingWebServer implements Server {
                 LOG.debug("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
 
                 executors.submit(new ServerTask(
-                            new HttpServerJobCacheableTemplate(
+                            new HttpProtocolJobCacheableTemplate(
                                 client.getInputStream(), 
                                 client.getOutputStream())
                             )

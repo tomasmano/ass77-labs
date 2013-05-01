@@ -10,7 +10,7 @@ import ass.manotoma.webserver01.http.HttpResponse;
 import ass.manotoma.webserver01.http.util.StatusCode;
 import ass.manotoma.webserver01.io.HttpRequestReader;
 import ass.manotoma.webserver01.security.SecurityFilter;
-import ass.manotoma.webserver01.server.support.HttpServerJobCacheableTemplate;
+import ass.manotoma.webserver01.server.support.HttpProtocolJobCacheableTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;

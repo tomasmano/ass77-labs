@@ -1,7 +1,7 @@
 package ass.manotoma.webserver01.server.acceptor;
 
 import ass.manotoma.webserver01.Bootstrap;
-import ass.manotoma.webserver01.server.support.HttpServerJobTemplate;
+import ass.manotoma.webserver01.server.support.HttpProtocolJobTemplate;
 import ass.manotoma.webserver01.server.support.ServerTask;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -52,7 +52,7 @@ public class WebServer implements Server {
                 LOG.info("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
 
                 Runnable task = new ServerTask(
-                        new HttpServerJobTemplate(
+                        new HttpProtocolJobTemplate(
                         client.getInputStream(),
                         client.getOutputStream()));
                 task.run();

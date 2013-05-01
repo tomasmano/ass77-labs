@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public abstract class ServerJobTemplate {
+public abstract class ServerJobTemplate<RQ extends Request, RSP extends Response> {
 
     public static final Logger LOG = LoggerFactory.getLogger(ServerJobTemplate.class);
     
@@ -25,9 +25,9 @@ public abstract class ServerJobTemplate {
     //////////  Template method (general workflow structure)  //////////
 
     public Response doTemplate() {
-        Request req = parse(parser);
+        RQ req = parse(parser);
         preProcess(req);
-        Response res = serve(req);
+        RSP res = serve(req);
         postProcess(res);
         LOG.debug("Job finished: Request [{}] processing succesfully finished", req);
         return res;
@@ -41,14 +41,14 @@ public abstract class ServerJobTemplate {
      * @param source the given source
      * @return request
      */
-    public abstract Request parse(RequestReader source);
+    public abstract RQ parse(RequestReader source);
 
     /**
      * Do custom preprocessing.
      *
      * @param req request to be preprocessed
      */
-    public abstract void preProcess(Request req);
+    public abstract void preProcess(RQ req);
 
     /**
      * Serve the given request.
@@ -56,14 +56,14 @@ public abstract class ServerJobTemplate {
      * @param req
      * @return
      */
-    public abstract Response serve(Request req);
+    public abstract RSP serve(RQ req);
 
     /**
      * Do custom postprocessing.
      *
-     * @param req response to be postprocessed
+     * @param res response to be postprocessed
      */
-    public abstract void postProcess(Response req);
+    public abstract void postProcess(RSP res);
     
     //////////  Getters / Setters  //////////
 

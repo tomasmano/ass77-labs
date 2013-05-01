@@ -24,18 +24,18 @@ import org.springframework.security.authentication.BadCredentialsException;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class HttpServerJobCacheableTemplate extends ServerJobTemplate {
+public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequest, HttpResponse> {
 
-    public static final Logger LOG = LoggerFactory.getLogger(HttpServerJobCacheableTemplate.class);
+    public static final Logger LOG = LoggerFactory.getLogger(HttpProtocolJobCacheableTemplate.class);
     private CacheService cache = CacheFactory.getCache();
     private SecurityFilter securityFilter = SecurityFilter.getInstance();
 
-    public HttpServerJobCacheableTemplate(InputStream input, OutputStream output) {
+    public HttpProtocolJobCacheableTemplate(InputStream input, OutputStream output) {
         // wrap input to HttpRequestReader
         super(new HttpRequestReader(input), output);
     }
 
-    public Request parse(RequestReader parser) {
+    public HttpRequest parse(RequestReader parser) {
         HttpRequest req = null;
         try {
             req = HttpMsgsFactory.createRequest(parser);
@@ -44,20 +44,20 @@ public class HttpServerJobCacheableTemplate extends ServerJobTemplate {
         return req;
     }
 
-    public void preProcess(Request req) {
+    public void preProcess(HttpRequest req) {
         try {
-            securityFilter.filter((HttpRequest) req);
+            securityFilter.filter(req);
         } catch (BadCredentialsException e) {
         }
     }
 
-    public Response serve(Request r) {
-        LOG.debug("Serving request {}..", r);
+    public HttpResponse serve(HttpRequest req) {
+        LOG.debug("Serving request {}..", req);
         HttpResponse res = null;
         try {
-            HttpRequest req = (HttpRequest) r;
             DataHolder data = cache.load(req.getTarget().getPath());
-            if (data != null) {
+            if (data != null) { 
+                // data not null - create response with cached data
                 res = HttpMsgsFactory.createResponse(req, data.getBytes());
                 LOG.debug("Returning response with data [{} bytes] from cache", data.getBytes().length);
             } else {
@@ -73,16 +73,16 @@ public class HttpServerJobCacheableTemplate extends ServerJobTemplate {
         return res;
     }
 
-    public void postProcess(Response res) {
+    public void postProcess(HttpResponse res) {
 //        HttpResponsePrinter.printToConsole((HttpResponse) res);
     }
 
-    private void send(Response res) {
+    private void send(HttpResponse res) {
         LOG.debug("Sending response [{}].. ", res);
         HttpResponseOutputStream httpOutputStream = null;
         try {
             httpOutputStream = new HttpResponseOutputStream(new BufferedOutputStream(getOutputStream()));
-            httpOutputStream.write((HttpResponse) res);
+            httpOutputStream.write(res);
             httpOutputStream.close();
         } catch (Exception ex) {
             LOG.error("An error occured while sending response: " + ex.getMessage());

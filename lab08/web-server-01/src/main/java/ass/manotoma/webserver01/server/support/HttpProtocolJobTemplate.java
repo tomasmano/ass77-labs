@@ -1,13 +1,9 @@
 package ass.manotoma.webserver01.server.support;
 
-import ass.manotoma.webserver01.cache.CacheFactory;
-import ass.manotoma.webserver01.cache.CacheService;
-import ass.manotoma.webserver01.cache.DataHolder;
 import ass.manotoma.webserver01.http.exception.BadSyntaxException;
 import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.http.HttpMsgsFactory;
 import ass.manotoma.webserver01.http.HttpResponse;
-import ass.manotoma.webserver01.http.util.StatusCode;
 import ass.manotoma.webserver01.io.HttpRequestReader;
 import ass.manotoma.webserver01.io.HttpResponseOutputStream;
 import ass.manotoma.webserver01.io.RequestReader;
@@ -22,15 +18,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class HttpServerJobTemplate extends ServerJobTemplate {
+public class HttpProtocolJobTemplate extends ServerJobTemplate<HttpRequest, HttpResponse> {
 
-    public static final Logger LOG = LoggerFactory.getLogger(HttpServerJobTemplate.class);
+    public static final Logger LOG = LoggerFactory.getLogger(HttpProtocolJobTemplate.class);
 
-    public HttpServerJobTemplate(InputStream input, OutputStream output) {
+    public HttpProtocolJobTemplate(InputStream input, OutputStream output) {
         super(new HttpRequestReader(input), output);
     }
 
-    public Request parse(RequestReader parser) {
+    public HttpRequest parse(RequestReader parser) {
         HttpRequest req = null;
         try {
             req = HttpMsgsFactory.createRequest(parser);
@@ -39,14 +35,14 @@ public class HttpServerJobTemplate extends ServerJobTemplate {
         return req;
     }
 
-    public void preProcess(Request req) {
+    public void preProcess(HttpRequest req) {
     }
 
-    public Response serve(Request req) {
+    public HttpResponse serve(HttpRequest req) {
         LOG.debug("Serving request {}..", req);
         HttpResponse res = null;
         try {
-            res = HttpMsgsFactory.createResponse((HttpRequest) req);
+            res = HttpMsgsFactory.createResponse(req);
             send(res);
         } catch (Exception ex) {
             LOG.error("An error occured during serving: {}", ex);
@@ -54,11 +50,11 @@ public class HttpServerJobTemplate extends ServerJobTemplate {
         return res;
     }
 
-    public void postProcess(Response res) {
+    public void postProcess(HttpResponse res) {
 //        HttpResponsePrinter.print((HttpResponse) res);
     }
 
-    private void send(Response res) {
+    private void send(HttpResponse res) {
         LOG.debug("Sending response [{}].. ", res);
         HttpResponseOutputStream httpOutputStream = null;
         try {
