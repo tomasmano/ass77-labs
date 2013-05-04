@@ -26,4 +26,34 @@ public enum StatusCode {
         return this.code;
     }
 
+    //////////  Inner Enums  //////////
+    
+    public enum Title {
+
+        _400("<html><head><title>Bad Request</title></head><body><h1>"), _401("<html><head><title>Authorization Required</title></head><body><h1>"), _404("<html><head><title>Not Found</title></head><body><h1>");
+        private final String text;
+
+        private Title(String text) {
+            this.text = text;
+        }
+
+        public String getText() {
+            return text;
+        }
+    }
+
+    public enum Page {
+
+        _400("</h1><p>Web server was unable to understand the request and process it.</p></body></html>"), _401("</h1><p>Authentication required.</p></body></html>"), _404("<html><head><title>Not Found</title></head><body><h1>");
+        private final String text;
+
+        private Page(String text) {
+            this.text = text;
+        }
+
+        public String getText() {
+            return text;
+        }
+    }
+    
 }

@@ -1,6 +1,8 @@
 package ass.manotoma.webserver01.http;
 
-import ass.manotoma.webserver01.server.support.Request;
+import ass.manotoma.webserver01.http.exception.NotFoundException;
+import ass.manotoma.webserver01.server.ContentFinder;
+import ass.manotoma.webserver01.server.model.Request;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.Map;
 public class HttpRequest implements Request {
 
     private Method method;
+    private String requestTargetName;
     private File requestTarget;
     private boolean securedTarget;
     private boolean authenticated;
@@ -20,14 +23,14 @@ public class HttpRequest implements Request {
     public HttpRequest() {
     }
 
-    public HttpRequest(Method method, String requestTarget) {
-        this.method = method;
-        this.requestTarget = new File(requestTarget);
-    }
-
-    public HttpRequest(String method, String requestTarget) {
+    public HttpRequest(String method, String requestTargetName) {
         this.method = Method.valueOf(method);
-        this.requestTarget = new File("."+requestTarget);
+        this.requestTargetName = requestTargetName;
+    }
+    
+    public HttpRequest(String method, File file) {
+        this.method = Method.valueOf(method);
+        this.requestTarget = file;
     }
 
     public HttpRequest addHeader(String header, String value){
@@ -45,7 +48,14 @@ public class HttpRequest implements Request {
         this.method = method;
     }
 
+    public String getRequestTargetName() {
+        return requestTargetName;
+    }
+
     public File getTarget() {
+        if (requestTarget == null) {
+            throw new IllegalStateException("Target has not been loaded yet.");
+        }
         return requestTarget;
     }
 
@@ -76,7 +86,7 @@ public class HttpRequest implements Request {
 
     @Override
     public String toString() {
-        return "HttpRequest{" + "method=" + method + ", requestTarget=" + requestTarget + '}';
+        return method + " " + requestTargetName;
     }
     
     //////////  Inner Class  //////////

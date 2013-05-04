@@ -1,5 +1,9 @@
 package ass.manotoma.webserver01.server.support;
 
+import ass.manotoma.webserver01.server.model.Response;
+import ass.manotoma.webserver01.server.model.Request;
+import ass.manotoma.webserver01.http.exception.handler.HttpExceptionHandler;
+import ass.manotoma.webserver01.http.exception.HttpException;
 import ass.manotoma.webserver01.io.RequestReader;
 import java.io.OutputStream;
 import org.slf4j.Logger;
@@ -25,12 +29,20 @@ public abstract class ServerJobTemplate<RQ extends Request, RSP extends Response
     //////////  Template method (general workflow structure)  //////////
 
     public RSP doTemplate() {
-        RQ req = parse(parser);
-        preProcess(req);
-        RSP res = serve(req);
-        postProcess(req, res);
-        LOG.debug("Job finished: Request [{}] processing succesfully finished", req);
-        return res;
+        RQ req = null;
+        RSP res = null;
+        try {
+            req = parse(parser);
+            LOG.info("{}", req);
+            preProcess(req);
+            res = serve(req);
+            postProcess(req, res);
+        } catch (HttpException e) {
+            res = (RSP) HttpExceptionHandler.getInstance().handle(e, os);
+        } finally {
+            LOG.debug("Steps done.");
+            return res;
+        }
     }
     
     //////////  Individual steps (placeholders)  //////////
@@ -70,4 +82,5 @@ public abstract class ServerJobTemplate<RQ extends Request, RSP extends Response
     public OutputStream getOutputStream() {
         return os;
     }
+   
 }

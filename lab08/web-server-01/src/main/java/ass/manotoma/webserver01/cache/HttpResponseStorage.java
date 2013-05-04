@@ -10,11 +10,11 @@ import ass.manotoma.webserver01.server.processor.PostProcessor;
  * 
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class ResponseStorage implements PostProcessor<HttpRequest, HttpResponse> {
+public class HttpResponseStorage implements PostProcessor<HttpRequest, HttpResponse> {
     
     private static CacheService cache = CacheFactory.getCache();
     
-    private static PostProcessor<HttpRequest, HttpResponse> INSTANCE = new ResponseStorage();
+    private static PostProcessor<HttpRequest, HttpResponse> INSTANCE = new HttpResponseStorage();
     
     public static PostProcessor<HttpRequest, HttpResponse> getInstance(){
         return INSTANCE;
@@ -22,7 +22,7 @@ public class ResponseStorage implements PostProcessor<HttpRequest, HttpResponse>
 
     public HttpResponse postProcess(HttpRequest req, HttpResponse res) {
         if (res.getStatusCode().equals(StatusCode._200) && !res.isCached()) {
-            cache.store(req.getTarget().getPath(), new DataHolder(res.getBody()));
+            cache.store(req.getTarget().getPath(), new ContentHolder(res.getBody()));
         }
         return res;
     }

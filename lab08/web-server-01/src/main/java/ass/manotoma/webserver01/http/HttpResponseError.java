@@ -23,6 +23,7 @@ public class HttpResponseError extends HttpResponse {
     public HttpResponseError(StatusCode code, String targetName) {
         this.code = code;
         this.targetName = targetName;
+        headers.put(Header.CONTENT_TYPE, "text/html; charset=UTF-8");
     }
 
     public HttpResponseError(StatusCode code, String targetName, String title, String page) {
@@ -30,6 +31,7 @@ public class HttpResponseError extends HttpResponse {
         this.targetName = targetName;
         this.title = title;
         this.page = page;
+        headers.put(Header.CONTENT_TYPE, "text/html; charset=UTF-8");
     }
 
     @Override
@@ -88,5 +90,12 @@ public class HttpResponseError extends HttpResponse {
         return true;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public String getPage() {
+        return page;
+    }
     
 }

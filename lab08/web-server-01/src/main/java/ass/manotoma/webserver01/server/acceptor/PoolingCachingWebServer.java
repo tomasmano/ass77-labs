@@ -1,7 +1,7 @@
 package ass.manotoma.webserver01.server.acceptor;
 
 import ass.manotoma.webserver01.Bootstrap;
-import ass.manotoma.webserver01.server.support.HttpProtocolJobCacheableTemplate;
+import ass.manotoma.webserver01.server.support.HttpProtocolCacheableTemplate;
 import ass.manotoma.webserver01.server.support.ServerTask;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -31,7 +31,7 @@ public class PoolingCachingWebServer implements Server {
     }
 
     public void init() {
-        // set properties
+        // set properties 
         LOG.info("Initializing {}..", this.getClass().getSimpleName());
         port = new Integer(Bootstrap.properties.getProperty("port"));
         LOG.info("Will use port [{}]", port);
@@ -40,11 +40,12 @@ public class PoolingCachingWebServer implements Server {
         executors = Executors.newFixedThreadPool(poolSize);
 
         // launch server
-        LOG.info("Launching web server..");
+        LOG.info("Launching web server now..");
         try {
             LOG.info("Using port [{}]..", port);
             server = new ServerSocket(port);
-            LOG.info("Server bound to port [{}] succesfully..", port);
+            LOG.info("Server bound to port [{}] succesfully.", port);
+            LOG.info("Waiting for the clients' requests on the address: [{}/{}]...", InetAddress.getLocalHost().getHostAddress(), server.getLocalPort());
         } catch (IOException ex) {
             LOG.error("An error occured during binding server on port [{}]: {}", port, ex);
             LOG.info("Shuting down..");
@@ -57,12 +58,11 @@ public class PoolingCachingWebServer implements Server {
         while (true) {
             Socket client = null;
             try {
-                LOG.debug("Waiting for the clients' requests on the address: [{}/{}]...", InetAddress.getLocalHost().getHostAddress(), server.getLocalPort());
                 client = server.accept();
                 LOG.debug("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
 
                 executors.submit(new ServerTask(
-                            new HttpProtocolJobCacheableTemplate(
+                            new HttpProtocolCacheableTemplate(
                                 client.getInputStream(), 
                                 client.getOutputStream())
                             )

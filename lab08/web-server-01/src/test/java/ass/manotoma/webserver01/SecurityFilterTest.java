@@ -3,7 +3,8 @@ package ass.manotoma.webserver01;
 import ass.manotoma.webserver01.http.HttpMsgsFactory;
 import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.io.HttpRequestReader;
-import ass.manotoma.webserver01.security.SecurityFilter;
+import ass.manotoma.webserver01.security.HttpSecurityFilter;
+import ass.manotoma.webserver01.server.HttpContentLoader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import org.apache.commons.codec.binary.Base64;
@@ -32,8 +33,9 @@ public class SecurityFilterTest {
 
         //when
         HttpRequest req = HttpMsgsFactory.createRequest(reader);
-        SecurityFilter filer = SecurityFilter.getInstance();
-        HttpRequest filtered = filer.preProcess(req);
+        HttpRequest reqExp = HttpContentLoader.getInstance().preProcess(req);
+        HttpSecurityFilter filer = HttpSecurityFilter.getInstance();
+        HttpRequest filtered = filer.preProcess(reqExp);
         
         //then
         assertTrue(filtered.isSecuredTarget());

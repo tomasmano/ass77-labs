@@ -1,6 +1,5 @@
 package ass.manotoma.webserver01.http;
 
-import ass.manotoma.webserver01.Bootstrap;
 import ass.manotoma.webserver01.http.exception.BadSyntaxException;
 import ass.manotoma.webserver01.http.util.StatusCode;
 import ass.manotoma.webserver01.io.RequestReader;
@@ -31,7 +30,8 @@ public class HttpMsgsFactory {
             }
             // 1. Read the first line
             String[] first = firstLine.split("\\s+");
-            request = new HttpRequest(first[0], first[1]);
+            String targetName = first[1];
+            request = new HttpRequest(first[0], targetName);
             // 2. Read the request header line by line till you got the blank line, for each header line parse [fieldName: fieldValue]
             String line = null;
             String[] header;
@@ -41,15 +41,11 @@ public class HttpMsgsFactory {
             }
             // 3. Read the entity body (not implemented, we don't support POST requests)
             // nothing
-        } catch (IllegalArgumentException ex) {
-            LOG.error("Error occured during parsing: {}", ex);
-            throw new BadSyntaxException("Bad syntax");
-        } catch (IOException ex) {
-            LOG.error("Error occured during parsing: {}", ex);
+            LOG.debug("Parsing finished.");
         } catch (Exception ex) {
             LOG.error("Error occured during parsing: {}", ex);
             throw new BadSyntaxException("Bad syntax");
-        }
+        } 
         return request;
     }
 
@@ -60,19 +56,6 @@ public class HttpMsgsFactory {
      * @return HttpResponse
      */
     public static HttpResponse createResponse(HttpRequest input) {
-        LOG.debug("Creating response.. processing request [{}] ..", input);
-        if (input == null) {
-            LOG.debug("Request is null, creating 400 response..");
-            return new HttpResponseError(StatusCode._400, "unknow", Title._400.getText(), Page._400.getText());
-        }
-        if (!input.getTarget().exists()) {
-            LOG.debug("Requestested targed doesn't exist, creating 404 response...");
-            return new HttpResponseError(StatusCode._404, input.getTarget().getName(), Title._404.getText(), Page._404.getText());
-        }
-        if (input.isSecuredTarget() && !input.isAuthenticated()) {
-            LOG.debug("Requestested targed is secured and client authentication was not successfull, creating 404 response...");
-            return new HttpResponseError(StatusCode._401, input.getTarget().getName(), Title._401.getText(), Page._401.getText()).addHeader(HttpResponse.Header.WWW_AUTHENTICATE, Bootstrap.properties.getProperty("security_realm"));
-        }
         HttpResponseSuccess response = new HttpResponseSuccess(input.getTarget());
         return response;
     }
@@ -90,35 +73,17 @@ public class HttpMsgsFactory {
         res.setCached(true);
         return res;
     }
-
-    //////////  Inner Enums  //////////
-    
-    public enum Title {
-
-        _400("<html><head><title>Bad Request</title></head><body><h1>"), _401("<html><head><title>Authorization Required</title></head><body><h1>"), _404("<html><head><title>Not Found</title></head><body><h1>");
-        private final String text;
-
-        private Title(String text) {
-            this.text = text;
-        }
-
-        public String getText() {
-            return text;
-        }
+ 
+    /**
+     * Create error response for the given request with given code.
+     * 
+     * @param code input req
+     * @param data cached data
+     * @return HttpResponseError
+     */
+    public static HttpResponse createErrorResponse(StatusCode code, String targetName) {
+        HttpResponse res = new HttpResponseError(code, targetName, StatusCode.Title.valueOf(code.name()).getText(), StatusCode.Page.valueOf(code.name()).getText());
+        return res;
     }
 
-    public enum Page {
-
-        _400("</h1><p>Web server was unable to understand the request and process it.</p></body></html>"), _401("</h1><p>Authentication required.</p></body></html>"), _404("<html><head><title>Not Found</title></head><body><h1>");
-       
-        private final String text;
-
-        private Page(String text) {
-            this.text = text;
-        }
-
-        public String getText() {
-            return text;
-        }
-    }
 }

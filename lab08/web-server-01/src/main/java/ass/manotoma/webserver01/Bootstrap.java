@@ -28,6 +28,7 @@ public class Bootstrap {
     public static void loadProperties() {
         // load properties
         try {
+            LOG.info("****************************************************************************************");
             properties.load(Bootstrap.class.getClassLoader().getResourceAsStream(CONFIG_PROPERTIES_LOCATION));
             LOG.info("Using properties: {}", properties.entrySet());
         } catch (IOException ex) {
@@ -77,6 +78,7 @@ public class Bootstrap {
             // default
             server = new PoolingWebServer();
         }
+        LOG.info("****************************************************************************************");
         server.serve();
     }
 }

@@ -1,12 +1,21 @@
 package ass.manotoma.webserver01.http.exception;
 
+import ass.manotoma.webserver01.http.HttpRequest;
+import ass.manotoma.webserver01.http.HttpResponse;
+import ass.manotoma.webserver01.http.exception.handler.HttpExceptionVisitor;
+import java.io.OutputStream;
+
 /**
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class UnauthorizedException extends RuntimeException {
+public class UnauthorizedException extends HttpException {
 
     public UnauthorizedException() {
+    }
+
+    public UnauthorizedException(HttpRequest request) {
+        super(request);
     }
 
     public UnauthorizedException(String message) {
@@ -25,4 +34,8 @@ public class UnauthorizedException extends RuntimeException {
         super(message, cause, enableSuppression, writableStackTrace);
     }
     
+    @Override
+    public HttpResponse accept(HttpExceptionVisitor visitor, OutputStream os) {
+        return visitor.handle(this, os);
+    }
 }

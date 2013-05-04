@@ -2,9 +2,8 @@ package ass.manotoma.webserver01.server.processor.provider;
 
 import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.server.processor.PreProcessor;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
-import org.springframework.security.authentication.BadCredentialsException;
 
 /**
  * 
@@ -12,7 +11,7 @@ import org.springframework.security.authentication.BadCredentialsException;
  */
 public class HttpPreProcessorsProvider implements PreProcessorsProvider<HttpRequest> {
 
-    private static Set<PreProcessor<HttpRequest>> preProcessors = new HashSet<PreProcessor<HttpRequest>>();
+    private static Set<PreProcessor<HttpRequest>> preProcessors = new LinkedHashSet<PreProcessor<HttpRequest>>();
 
     private static PreProcessorsProvider<HttpRequest> INSTANCE = new HttpPreProcessorsProvider();
     
@@ -27,10 +26,7 @@ public class HttpPreProcessorsProvider implements PreProcessorsProvider<HttpRequ
 
     public HttpRequest preProcess(HttpRequest req) {
         for (PreProcessor<HttpRequest> proc : preProcessors) {
-            try {
-                proc.preProcess(req);
-            } catch (BadCredentialsException e) {
-            }
+            proc.preProcess(req);
         }
         return req;
     }

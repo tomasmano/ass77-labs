@@ -1,6 +1,6 @@
 package ass.manotoma.webserver01.server.support;
 
-import ass.manotoma.webserver01.http.exception.BadSyntaxException;
+import ass.manotoma.webserver01.server.support.sender.HttpResponseSender;
 import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.http.HttpMsgsFactory;
 import ass.manotoma.webserver01.http.HttpResponse;
@@ -16,20 +16,16 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class HttpProtocolJobTemplate extends ServerJobTemplate<HttpRequest, HttpResponse> {
+public class HttpProtocolTemplate extends ServerJobTemplate<HttpRequest, HttpResponse> {
 
-    public static final Logger LOG = LoggerFactory.getLogger(HttpProtocolJobTemplate.class);
+    public static final Logger LOG = LoggerFactory.getLogger(HttpProtocolTemplate.class);
 
-    public HttpProtocolJobTemplate(InputStream input, OutputStream output) {
+    public HttpProtocolTemplate(InputStream input, OutputStream output) {
         super(new HttpRequestReader(input), output);
     }
 
     public HttpRequest parse(RequestReader parser) {
-        HttpRequest req = null;
-        try {
-            req = HttpMsgsFactory.createRequest(parser);
-        } catch (BadSyntaxException e) {
-        }
+        HttpRequest req = HttpMsgsFactory.createRequest(parser);
         return req;
     }
 
@@ -37,7 +33,7 @@ public class HttpProtocolJobTemplate extends ServerJobTemplate<HttpRequest, Http
     }
 
     public HttpResponse serve(HttpRequest req) {
-        LOG.debug("Serving request {}..", req);
+        LOG.debug("Serving: {}", req);
         HttpResponse res = HttpMsgsFactory.createResponse(req);
         send(res);
         return res;

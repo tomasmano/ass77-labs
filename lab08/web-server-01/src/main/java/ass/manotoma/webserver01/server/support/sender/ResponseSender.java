@@ -1,5 +1,6 @@
-package ass.manotoma.webserver01.server.support;
+package ass.manotoma.webserver01.server.support.sender;
 
+import ass.manotoma.webserver01.server.model.Response;
 import java.io.OutputStream;
 
 /**

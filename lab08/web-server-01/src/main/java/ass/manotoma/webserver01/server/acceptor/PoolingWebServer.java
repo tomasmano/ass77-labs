@@ -1,7 +1,7 @@
 package ass.manotoma.webserver01.server.acceptor;
 
 import ass.manotoma.webserver01.Bootstrap;
-import ass.manotoma.webserver01.server.support.HttpProtocolJobTemplate;
+import ass.manotoma.webserver01.server.support.HttpProtocolTemplate;
 import ass.manotoma.webserver01.server.support.ServerTask;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -60,7 +60,7 @@ public class PoolingWebServer implements Server {
                 LOG.debug("Accepted connection from client [{}].", client.getInetAddress().getHostAddress());
 
                 executors.submit(new ServerTask(
-                            new HttpProtocolJobTemplate(
+                            new HttpProtocolTemplate(
                                 client.getInputStream(), 
                                 client.getOutputStream())
                             )

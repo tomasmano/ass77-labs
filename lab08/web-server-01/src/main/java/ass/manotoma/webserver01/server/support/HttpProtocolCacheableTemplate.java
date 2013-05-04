@@ -1,16 +1,17 @@
 package ass.manotoma.webserver01.server.support;
 
+import ass.manotoma.webserver01.server.support.sender.HttpResponseSender;
 import ass.manotoma.webserver01.cache.CacheFactory;
 import ass.manotoma.webserver01.cache.CacheService;
-import ass.manotoma.webserver01.cache.DataHolder;
-import ass.manotoma.webserver01.cache.ResponseStorage;
+import ass.manotoma.webserver01.cache.ContentHolder;
+import ass.manotoma.webserver01.cache.HttpResponseStorage;
 import ass.manotoma.webserver01.http.HttpRequest;
 import ass.manotoma.webserver01.http.HttpMsgsFactory;
 import ass.manotoma.webserver01.http.HttpResponse;
-import ass.manotoma.webserver01.http.exception.BadSyntaxException;
 import ass.manotoma.webserver01.io.HttpRequestReader;
 import ass.manotoma.webserver01.io.RequestReader;
-import ass.manotoma.webserver01.security.SecurityFilter;
+import ass.manotoma.webserver01.security.HttpSecurityFilter;
+import ass.manotoma.webserver01.server.HttpContentLoader;
 import ass.manotoma.webserver01.server.processor.provider.HttpPostProcessorsProvider;
 import ass.manotoma.webserver01.server.processor.provider.HttpPreProcessorsProvider;
 import ass.manotoma.webserver01.server.processor.provider.PostProcessorsProvider;
@@ -25,9 +26,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequest, HttpResponse> {
+public class HttpProtocolCacheableTemplate extends ServerJobTemplate<HttpRequest, HttpResponse> {
 
-    public static final Logger LOG = LoggerFactory.getLogger(HttpProtocolJobCacheableTemplate.class);
+    public static final Logger LOG = LoggerFactory.getLogger(HttpProtocolCacheableTemplate.class);
     
     // Cache
     private static CacheService cache = CacheFactory.getCache();
@@ -38,11 +39,14 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
     
     // Add custom processors
     static{
-        preProcessors.add(SecurityFilter.getInstance()); // it handles authentication if necessary
-        postProcessors.add(ResponseStorage.getInstance()); // it stores data to cache if necessary
+        // pre
+        preProcessors.add(HttpContentLoader.getInstance()); // it loads content to request
+        preProcessors.add(HttpSecurityFilter.getInstance()); // it handles authentication if necessary
+        // post
+        postProcessors.add(HttpResponseStorage.getInstance()); // it stores data to cache if necessary
     }
 
-    public HttpProtocolJobCacheableTemplate(InputStream input, OutputStream output) {
+    public HttpProtocolCacheableTemplate(InputStream input, OutputStream output) {
         // wrap InputStream to HttpRequestReader
         super(new HttpRequestReader(input), output);
     }
@@ -50,12 +54,7 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
     //////////  Individual steps (placeholders)  //////////
 
     public HttpRequest parse(RequestReader parser) {
-        HttpRequest req = null;
-        try {
-            req = HttpMsgsFactory.createRequest(parser);
-        } catch (BadSyntaxException e) {
-        }
-        return req;
+        return HttpMsgsFactory.createRequest(parser);
     }
 
     public void preProcess(HttpRequest req) {
@@ -63,9 +62,8 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
     }
 
     public HttpResponse serve(HttpRequest req) {
-        LOG.debug("Serving request {}..", req);
-        HttpResponse res = null;
-        res = lookupCacheOrLoadUncached(req);
+        LOG.debug("Serving: {}", req);
+        HttpResponse res = lookupCacheOrLoadUncached(req);
         send(res);
         return res;
     }
@@ -81,11 +79,11 @@ public class HttpProtocolJobCacheableTemplate extends ServerJobTemplate<HttpRequ
     }
 
     private HttpResponse lookupCacheOrLoadUncached(HttpRequest req) {
-        DataHolder data = cache.load(req.getTarget().getPath());
-        if (data != null) {
-            // data not null - create response with cached data
-            LOG.debug("Returning response with data [{} bytes] from cache", data.getBytes().length);
-            return HttpMsgsFactory.createResponse(req, data.getBytes());
+        ContentHolder content = cache.load(req.getTarget().getPath());
+        if (content != null) {
+            // data not null => create response WITH content from cache
+            LOG.debug("Returning response with data [{} bytes] from cache", content.getBytes().length);
+            return HttpMsgsFactory.createResponse(req, content.getBytes());
         } else {
             return HttpMsgsFactory.createResponse(req);
         }

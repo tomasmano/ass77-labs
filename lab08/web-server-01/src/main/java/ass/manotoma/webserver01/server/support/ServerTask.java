@@ -1,5 +1,6 @@
 package ass.manotoma.webserver01.server.support;
 
+import ass.manotoma.webserver01.server.model.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class ServerTask implements Runnable {
         Response res = template.doTemplate();
         long end = System.currentTimeMillis();
         long diff = end - start;
-        LOG.debug("Job finished [{} ms]: Request processing succesfully finished", diff);
+        LOG.info("Job finished [{} ms]: {}", diff, res);
     }
     
 }

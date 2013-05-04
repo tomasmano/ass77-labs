@@ -1,4 +1,4 @@
-package ass.manotoma.webserver01.server.support;
+package ass.manotoma.webserver01.server.model;
 
 /**
  *

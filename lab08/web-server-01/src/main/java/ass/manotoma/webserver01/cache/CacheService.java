@@ -13,7 +13,7 @@ public interface CacheService {
      * @return dataholder of null if mapping no exists, or was deleted or
      * expired
      */
-    DataHolder load(String filename);
+    ContentHolder load(String filename);
 
     /**
      * Store the given data holder for the given key.
@@ -21,7 +21,7 @@ public interface CacheService {
      * @param filename
      * @param data 
      */
-    void store(String filename, DataHolder data);
+    void store(String filename, ContentHolder data);
 
     /**
      * Remove data holder with the given key.

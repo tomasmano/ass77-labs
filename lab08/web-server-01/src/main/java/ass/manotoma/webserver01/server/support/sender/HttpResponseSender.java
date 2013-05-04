@@ -1,4 +1,4 @@
-package ass.manotoma.webserver01.server.support;
+package ass.manotoma.webserver01.server.support.sender;
 
 import ass.manotoma.webserver01.http.HttpResponse;
 import ass.manotoma.webserver01.io.HttpResponseOutputStream;
@@ -19,7 +19,6 @@ public class HttpResponseSender implements ResponseSender<HttpResponse> {
     }
     
     public void send(HttpResponse res, OutputStream os) {
-        LOG.debug("Sending response [{}].. ", res);
         HttpResponseOutputStream httpOutputStream = null;
         try {
             httpOutputStream = new HttpResponseOutputStream(new BufferedOutputStream(os));

@@ -87,7 +87,7 @@ public class HttpResponseSuccess extends HttpResponse {
         if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
             headers.put(Header.CONTENT_TYPE, "text/html; charset=UTF-8");
             return;
-        }
+    }
         if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg") || fileName.endsWith(".png") || fileName.endsWith(".gif")) {
             headers.put(Header.CONTENT_TYPE, "image/gif");
             return;

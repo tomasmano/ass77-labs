@@ -4,11 +4,11 @@ package ass.manotoma.webserver01.cache;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class DataHolder {
+public class ContentHolder {
 
     private byte[] data;
 
-    public DataHolder(byte[] data) {
+    public ContentHolder(byte[] data) {
         this.data = data;
     }
 

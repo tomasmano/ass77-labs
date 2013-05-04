@@ -1,6 +1,6 @@
 package ass.manotoma.webserver01.server.processor;
 
-import ass.manotoma.webserver01.server.support.Request;
+import ass.manotoma.webserver01.server.model.Request;
 
 /**
  *

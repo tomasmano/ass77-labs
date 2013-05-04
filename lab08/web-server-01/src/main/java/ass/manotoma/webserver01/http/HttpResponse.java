@@ -1,6 +1,6 @@
 package ass.manotoma.webserver01.http;
 
-import ass.manotoma.webserver01.server.support.Response;
+import ass.manotoma.webserver01.server.model.Response;
 import ass.manotoma.webserver01.http.util.HeaderBuilder;
 import ass.manotoma.webserver01.http.util.StatusCode;
 import java.io.OutputStream;
@@ -63,7 +63,7 @@ public abstract class HttpResponse implements Response {
 
     @Override
     public String toString() {
-        return "HttpResponse{" + getStatusLine() + '}';
+        return getStatusLine();
     }
 
     

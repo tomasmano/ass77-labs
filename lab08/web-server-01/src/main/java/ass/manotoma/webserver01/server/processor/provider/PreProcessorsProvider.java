@@ -1,7 +1,7 @@
 package ass.manotoma.webserver01.server.processor.provider;
 
 import ass.manotoma.webserver01.server.processor.PreProcessor;
-import ass.manotoma.webserver01.server.support.Request;
+import ass.manotoma.webserver01.server.model.Request;
 
 /**
  *
