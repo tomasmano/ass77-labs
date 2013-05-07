@@ -7,6 +7,8 @@ import java.io.File;
  * @author Tomas Mano <tomasmano@gmail.com>
  */
 public class ContentFinder {
+    
+    private final static String SERVER_ROOT = ".";
 
     /**
      * Finds file for the given filename.
@@ -15,6 +17,6 @@ public class ContentFinder {
      * @return file for the given filename
      */
     public static File find(String filename) {
-        return new File("."+filename);
+        return new File(SERVER_ROOT + filename);
     }
 }
