@@ -8,9 +8,8 @@ import ass.manotoma.webserver01.server.model.Response;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public interface PostProcessorsProvider<RQ extends Request, RSP extends Response> {
-
-    RSP postProcess(RQ req, RSP res);
+public interface PostProcessorsProvider<RQ extends Request, RSP extends Response> extends PostProcessor<RQ, RSP> {
 
     void add(PostProcessor<RQ , RSP> processor);
+    
 }
