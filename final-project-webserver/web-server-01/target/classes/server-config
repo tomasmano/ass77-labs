@@ -1,0 +1,16 @@
+# =======================
+# Server configuration properties
+# =======================
+#
+# This file defines the server configuration. If property stated as required is not set, 
+# it will result in a server crash.
+
+# thread pool size (required)
+pool_size = 10
+
+# default listening port (required)
+port = 4444
+
+# cache expiration inteval in seconds, defiyng when the new version of 
+# page should be loaded from the disk (not supported)
+# cache_expiration_interval = 600
