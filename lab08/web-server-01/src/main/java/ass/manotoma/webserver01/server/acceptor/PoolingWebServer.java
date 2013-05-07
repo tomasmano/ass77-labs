@@ -62,8 +62,8 @@ public class PoolingWebServer implements Server {
                 executors.submit(new ServerTask(
                             new HttpProtocolTemplate(
                                 client.getInputStream(), 
-                                client.getOutputStream())
-                            )
+                                client.getOutputStream()),
+                            client)
                         );
 
             } catch (IOException e) {

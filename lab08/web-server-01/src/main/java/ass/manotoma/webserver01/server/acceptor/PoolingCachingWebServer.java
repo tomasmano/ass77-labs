@@ -22,6 +22,7 @@ public class PoolingCachingWebServer implements Server {
 
     private int port = 4444; //default value
     private int poolSize = 10; //default value
+    private int backlog = 10; //default value
     public static final Logger LOG = LoggerFactory.getLogger(PoolingCachingWebServer.class);
     private ExecutorService executors;
     private ServerSocket server;
@@ -32,19 +33,20 @@ public class PoolingCachingWebServer implements Server {
 
     public void init() {
         // set properties 
-        LOG.info("Initializing {}..", this.getClass().getSimpleName());
+        LOG.info("Initializing the {}..", this.getClass().getSimpleName());
         port = new Integer(Bootstrap.properties.getProperty("port"));
-        LOG.info("Will use port [{}]", port);
+        LOG.info("Will use the port [{}]", port);
+        backlog = new Integer(Bootstrap.properties.getProperty("backlog"));
+        LOG.info("Will use the backlog size [{}]", backlog);
         poolSize = new Integer(Bootstrap.properties.getProperty("pool_size"));
-        LOG.info("Will use pool size [{}]", poolSize);
+        LOG.info("Will use the pool size [{}]", poolSize);
         executors = Executors.newFixedThreadPool(poolSize);
 
         // launch server
-        LOG.info("Launching web server now..");
+        LOG.info("Launching the web server now..");
         try {
-            LOG.info("Using port [{}]..", port);
-            server = new ServerSocket(port);
-            LOG.info("Server bound to port [{}] succesfully.", port);
+            server = new ServerSocket(port, backlog);
+            LOG.info("Server bound to the port [{}] succesfully.", port);
             LOG.info("Waiting for the clients' requests on the address: [{}/{}]...", InetAddress.getLocalHost().getHostAddress(), server.getLocalPort());
         } catch (IOException ex) {
             LOG.error("An error occured during binding server on port [{}]: {}", port, ex);
@@ -64,15 +66,13 @@ public class PoolingCachingWebServer implements Server {
                 executors.submit(new ServerTask(
                             new HttpProtocolCacheableTemplate(
                                 client.getInputStream(), 
-                                client.getOutputStream())
-                            )
+                                client.getOutputStream()),
+                            client)
                         );
 
             } catch (IOException e) {
                 LOG.error("Fail to accept connection from client: {}", e);
-            } finally {
-//                IOUtils.closeQuietly(client);
-            }
+            } 
         }
 
     }

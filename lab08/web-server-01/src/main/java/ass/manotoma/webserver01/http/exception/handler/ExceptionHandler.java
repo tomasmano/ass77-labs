@@ -1,6 +1,5 @@
 package ass.manotoma.webserver01.http.exception.handler;
 
-import ass.manotoma.webserver01.http.exception.HttpException;
 import ass.manotoma.webserver01.server.model.Response;
 import java.io.OutputStream;
 
@@ -8,8 +7,8 @@ import java.io.OutputStream;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public interface ExceptionHandler<RSP extends Response> {
+public interface ExceptionHandler<RSP extends Response, EX extends RuntimeException> {
 
-    RSP handle(HttpException ex, OutputStream os);
+    RSP handle(EX ex, OutputStream os);
     
 }

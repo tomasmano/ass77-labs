@@ -1,6 +1,8 @@
 package ass.manotoma.webserver01.server.support;
 
 import ass.manotoma.webserver01.server.model.Response;
+import java.net.Socket;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +16,11 @@ public class ServerTask implements Runnable {
     public static final Logger LOG = LoggerFactory.getLogger(ServerTask.class);
     
     private ServerJobTemplate template;
+    private Socket client;
 
-    public ServerTask(ServerJobTemplate template) {
+    public ServerTask(ServerJobTemplate template, Socket client) {
         this.template = template;
+        this.client = client;
     }
     
     public void run() {
@@ -26,9 +30,10 @@ public class ServerTask implements Runnable {
     public void process() {
         long start = System.currentTimeMillis();
         Response res = template.doTemplate();
+        IOUtils.closeQuietly(client);
         long end = System.currentTimeMillis();
         long diff = end - start;
-        LOG.info("Job finished [{} ms]: {}", diff, res);
+        LOG.info("Finished [{} ms]: {}", diff, res);
     }
     
 }

@@ -54,7 +54,8 @@ public class WebServer implements Server {
                 Runnable task = new ServerTask(
                         new HttpProtocolTemplate(
                         client.getInputStream(),
-                        client.getOutputStream()));
+                        client.getOutputStream()),
+                        client);
                 task.run();
 
             } catch (IOException e) {

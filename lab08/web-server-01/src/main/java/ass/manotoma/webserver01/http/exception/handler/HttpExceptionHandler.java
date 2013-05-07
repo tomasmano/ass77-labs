@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class HttpExceptionHandler implements ExceptionHandler<HttpResponse> {
+public class HttpExceptionHandler implements ExceptionHandler<HttpResponse, HttpException> {
 
     public static final Logger LOG = LoggerFactory.getLogger(HttpExceptionHandler.class);
     
