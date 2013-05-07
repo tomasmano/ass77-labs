@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class HttpProtocolTemplate extends ServerJobTemplate<HttpRequest, HttpResponse> {
+public class HttpProtocolTemplate extends ProtocolTemplate<HttpRequest, HttpResponse> {
 
     public static final Logger LOG = LoggerFactory.getLogger(HttpProtocolTemplate.class);
 

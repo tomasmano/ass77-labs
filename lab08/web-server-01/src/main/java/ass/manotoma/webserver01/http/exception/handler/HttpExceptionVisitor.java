@@ -51,9 +51,4 @@ public class HttpExceptionVisitor {
         return res;
     }
 
-//    public void handle(HttpException ex, OutputStream os) {
-//        LOG.debug("Unspecified exception occured, creating 400 response...");
-//        HttpResponse res = new HttpResponseError(StatusCode._400, "waaaaaaaaaaaaat", HttpMsgsFactory.Title._400.getText(), HttpMsgsFactory.Page._400.getText());
-//        HttpResponseSender.getInstance().send(res, os);
-//    }
 }

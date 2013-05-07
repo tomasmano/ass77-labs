@@ -10,19 +10,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Server job template. Example of Template Method pattern. Also the reciever of
+ * Protocol template. Example of Template Method pattern. Also the reciever of
  * command object. Knows how to perform the operations associated with carrying
  * out a request.
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public abstract class ServerJobTemplate<RQ extends Request, RSP extends Response> {
+public abstract class ProtocolTemplate<RQ extends Request, RSP extends Response> {
 
-    public static final Logger LOG = LoggerFactory.getLogger(ServerJobTemplate.class);
+    public static final Logger LOG = LoggerFactory.getLogger(ProtocolTemplate.class);
     private RequestReader parser;
     private OutputStream os;
 
-    public ServerJobTemplate(RequestReader parser, OutputStream os) {
+    public ProtocolTemplate(RequestReader parser, OutputStream os) {
         this.parser = parser;
         this.os = os;
     }

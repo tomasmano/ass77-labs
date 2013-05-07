@@ -15,10 +15,10 @@ public class ServerTask implements Runnable {
     
     public static final Logger LOG = LoggerFactory.getLogger(ServerTask.class);
     
-    private ServerJobTemplate template;
+    private ProtocolTemplate template;
     private Socket client;
 
-    public ServerTask(ServerJobTemplate template, Socket client) {
+    public ServerTask(ProtocolTemplate template, Socket client) {
         this.template = template;
         this.client = client;
     }

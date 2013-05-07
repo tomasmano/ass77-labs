@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
-public class HttpProtocolCacheableTemplate extends ServerJobTemplate<HttpRequest, HttpResponse> {
+public class HttpProtocolCacheableTemplate extends ProtocolTemplate<HttpRequest, HttpResponse> {
 
     public static final Logger LOG = LoggerFactory.getLogger(HttpProtocolCacheableTemplate.class);
     
