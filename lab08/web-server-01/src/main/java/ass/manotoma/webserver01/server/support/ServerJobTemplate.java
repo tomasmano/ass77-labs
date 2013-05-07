@@ -10,14 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Server job template. Example of Template Method pattern.
+ * Server job template. Example of Template Method pattern. Also the reciever of
+ * command object. Knows how to perform the operations associated with carrying
+ * out a request.
  *
  * @author Tomas Mano <tomasmano@gmail.com>
  */
 public abstract class ServerJobTemplate<RQ extends Request, RSP extends Response> {
 
     public static final Logger LOG = LoggerFactory.getLogger(ServerJobTemplate.class);
-    
     private RequestReader parser;
     private OutputStream os;
 
@@ -25,9 +26,9 @@ public abstract class ServerJobTemplate<RQ extends Request, RSP extends Response
         this.parser = parser;
         this.os = os;
     }
-    
-    //////////  Template method (general workflow structure)  //////////
 
+    //////////  Template method (general workflow structure)  //////////
+    
     public RSP doTemplate() {
         RQ req = null;
         RSP res = null;
@@ -44,9 +45,9 @@ public abstract class ServerJobTemplate<RQ extends Request, RSP extends Response
             return res;
         }
     }
-    
-    //////////  Individual steps (placeholders)  //////////
 
+    //////////  Individual steps (placeholders)  //////////
+    
     /**
      * Parse the given reader.
      *
@@ -76,11 +77,10 @@ public abstract class ServerJobTemplate<RQ extends Request, RSP extends Response
      * @param res response to be postprocessed
      */
     public abstract void postProcess(RQ req, RSP res);
-    
-    //////////  Getters / Setters  //////////
 
+    //////////  Getters / Setters  //////////
+    
     public OutputStream getOutputStream() {
         return os;
     }
-   
 }

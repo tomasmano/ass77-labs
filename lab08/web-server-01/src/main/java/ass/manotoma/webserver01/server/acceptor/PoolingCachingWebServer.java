@@ -22,7 +22,7 @@ public class PoolingCachingWebServer implements Server {
 
     private int port = 4444; //default value
     private int poolSize = 10; //default value
-    private int backlog = 10; //default value
+    private int backlog = 100; //default value
     public static final Logger LOG = LoggerFactory.getLogger(PoolingCachingWebServer.class);
     private ExecutorService executors;
     private ServerSocket server;
@@ -34,11 +34,11 @@ public class PoolingCachingWebServer implements Server {
     public void init() {
         // set properties 
         LOG.info("Initializing the {}..", this.getClass().getSimpleName());
-        port = new Integer(Bootstrap.properties.getProperty("port"));
+        port = Bootstrap.properties.getProperty("port") == null ? port : new Integer(Bootstrap.properties.getProperty("port"));
         LOG.info("Will use the port [{}]", port);
-        backlog = new Integer(Bootstrap.properties.getProperty("backlog"));
+        backlog = Bootstrap.properties.getProperty("backlog") == null ? backlog : new Integer(Bootstrap.properties.getProperty("backlog"));
         LOG.info("Will use the backlog size [{}]", backlog);
-        poolSize = new Integer(Bootstrap.properties.getProperty("pool_size"));
+        poolSize = Bootstrap.properties.getProperty("pool_size") == null ? poolSize : new Integer(Bootstrap.properties.getProperty("pool_size"));
         LOG.info("Will use the pool size [{}]", poolSize);
         executors = Executors.newFixedThreadPool(poolSize);
 
