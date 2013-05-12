@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.013" errors="0" skipped="0" tests="1" name="ass.manotoma.webserver01.SecurityFilterTest">
+<testsuite failures="0" time="0.016" errors="0" skipped="0" tests="1" name="ass.manotoma.webserver01.SecurityFilterTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/jdk1.7.0_05/jre/lib/amd64"/>
@@ -14,7 +14,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value="unknown"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="/home/tomy/skul/ass77-labs/lab08/web-server-01"/>
+    <property name="user.dir" value="/home/tomy/skul/ass77-labs/final-project-webserver/web-server-01"/>
     <property name="java.runtime.version" value="1.7.0_05-b05"/>
     <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
     <property name="java.endorsed.dirs" value="/usr/lib/jvm/jdk1.7.0_05/jre/lib/endorsed"/>
@@ -58,5 +58,5 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="0.009" classname="ass.manotoma.webserver01.SecurityFilterTest" name="test_successfull_authentication"/>
+  <testcase time="0.011" classname="ass.manotoma.webserver01.SecurityFilterTest" name="test_successfull_authentication"/>
 </testsuite>
